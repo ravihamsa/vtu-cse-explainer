@@ -49,7 +49,15 @@ const check = async (name, expression, expected) => {
 };
 
 await check('diagram svgs rendered', `document.querySelectorAll('.native-diagram svg').length`, (n) => n >= 11);
-await check('module mind map', `!!document.querySelector('.native-diagram.mindmap svg')`, true);
+await check('module mind map', `!!document.querySelector('.native-diagram.d3-mindmap svg')`, true);
+const beforeZoom = await evaluate(`document.querySelector('.mm-viewport').getAttribute('transform')`);
+await evaluate(`document.querySelector('[aria-label="Zoom in"]').click()`);
+await sleep(300);
+await check('mind map zoom', `document.querySelector('.mm-viewport').getAttribute('transform')`, (v) => v !== beforeZoom);
+await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }))`);
+await check('mind map tooltip', `document.querySelector('.mindmap-tooltip b')?.textContent`, (v) => !!v);
+await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }))`);
+await check('glossary terms', `document.querySelectorAll('.glossary dt').length`, 24);
 await check('conceptual questions', `document.querySelectorAll('.concept-questions li').length`, 15);
 await check('replacement faults', `document.getElementById('rp-faults').textContent`, '12');
 await check('TLB EAT', `document.getElementById('eat-value').textContent`, '140.0 ns');

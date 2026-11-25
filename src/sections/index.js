@@ -1,5 +1,6 @@
 import OverviewSection from './OverviewSection.jsx';
 import MindMapSection from './MindMapSection.jsx';
+import GlossarySection from './GlossarySection.jsx';
 import BasicsSection from './BasicsSection.jsx';
 import BindingSection from './BindingSection.jsx';
 import LoadingSection from './LoadingSection.jsx';
@@ -19,6 +20,7 @@ import QuizSection from './QuizSection.jsx';
 export const sectionComponents = [
   { id: 'overview', Component: OverviewSection },
   { id: 'mindmap', Component: MindMapSection },
+  { id: 'glossary', Component: GlossarySection },
   { id: 'basics', Component: BasicsSection },
   { id: 'binding', Component: BindingSection },
   { id: 'loading', Component: LoadingSection },

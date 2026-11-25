@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 let d3Promise;
 function loadD3() {
@@ -17,6 +17,99 @@ const LIGHT = {
   idleBorder: '#d6dfec',
   label: '#55627a',
   text: '#172033',
+};
+
+const MINDMAP_DATA = {
+  name: 'Memory management',
+  tip: 'The OS gives every process a protected private address space, then maps it onto finite RAM.',
+  children: [
+    {
+      name: 'Hardware',
+      tip: 'Registers and the MMU define legal addresses and translate them at run time.',
+      children: [
+        { name: 'Base + limit', tip: 'Legal range is [base, base + limit); loading these registers is privileged.' },
+        { name: 'MMU', tip: 'Maps CPU-generated logical addresses to physical memory on every access.' },
+        { name: 'Address spaces', tip: 'Logical addresses belong to a process; physical addresses index RAM.' },
+      ],
+    },
+    {
+      name: 'Binding',
+      tip: 'The moment an address becomes physical decides how freely a process can move.',
+      children: [
+        { name: 'Compile time', tip: 'Absolute code: fast, but any new load address forces recompilation.' },
+        { name: 'Load time', tip: 'Relocatable code: the loader fixes the starting address once.' },
+        { name: 'Execution time', tip: 'Dynamic relocation: the mapping can change while the process runs.' },
+      ],
+    },
+    {
+      name: 'Loading',
+      tip: 'Only the work actually needed is brought into memory — at routine, library or process granularity.',
+      children: [
+        { name: 'Dynamic loading', tip: 'A routine is loaded the first time it is called.' },
+        { name: 'Dynamic linking', tip: 'A stub resolves to a shared library routine already in memory.' },
+        { name: 'Swapping', tip: 'The whole process image moves between RAM and backing store.' },
+      ],
+    },
+    {
+      name: 'Partitioning',
+      tip: 'Contiguous placement is simple, but free space can become scattered.',
+      children: [
+        { name: 'One block', tip: 'Contiguous allocation: each process gets one unbroken block of memory.' },
+        { name: 'Fit rules', tip: 'First fit, best fit and worst fit leave different hole patterns.' },
+        { name: 'Free holes', tip: 'Fragmentation: internal waste is inside a block; external waste is between blocks.' },
+      ],
+    },
+    {
+      name: 'Paging',
+      tip: 'Equal-size pages and frames remove external fragmentation and enable demand loading.',
+      children: [
+        { name: 'Pages + frames', tip: 'A logical page fits into any free physical frame of the same size.' },
+        { name: 'Page tables', tip: 'Map page numbers to frame numbers; protection bits travel with them.' },
+        { name: 'TLB', tip: 'A small associative cache of recent translations avoids page-table walks.' },
+        { name: 'Shared pages', tip: 'Pure code can be mapped once and reused by many processes.' },
+      ],
+    },
+    {
+      name: 'Segmentation',
+      tip: 'Memory is divided by meaning — code, data, stack — with a base and limit per segment.',
+      children: [
+        { name: 'Segment tbl', tip: 'Each entry gives the segment base address and its length.' },
+        { name: 'Regions', tip: 'Programmers see named, variable-length segments rather than fixed pages.' },
+        { name: 'External frag.', tip: 'Variable-length segments can leave unusable holes between them.' },
+      ],
+    },
+    {
+      name: 'Virtual memory',
+      tip: 'Processes see a large private memory; only the active parts need to be resident.',
+      children: [
+        { name: 'Demand paging', tip: 'Pages are fetched on first reference, not at process start.' },
+        { name: 'Page faults', tip: 'Validity is checked, the page is read, tables update, then the instruction retries.' },
+        { name: 'COW', tip: 'After fork both processes share frames until one writes.' },
+        { name: 'Replacement', tip: 'FIFO, LRU, OPT, clock, LFU and MFU choose which page leaves.' },
+      ],
+    },
+    {
+      name: 'Performance',
+      tip: 'Locality determines how many frames a process truly needs.',
+      children: [
+        { name: 'Working set', tip: 'The pages actively used together in the current window of references.' },
+        { name: 'Active set', tip: 'Balance set: the active processes whose working sets are kept in memory.' },
+        { name: 'Fault frequency', tip: 'Too many faults means add frames; too few means reclaim one.' },
+        { name: 'Thrashing', tip: 'Fault storms replace pages before they can be used again.' },
+      ],
+    },
+  ],
+};
+
+const BRANCH_COLOURS = {
+  Hardware: '#0f766e',
+  Binding: '#7c3aed',
+  Loading: '#0e7490',
+  Partitioning: '#b45309',
+  Paging: '#4f46e5',
+  Segmentation: '#be123c',
+  'Virtual memory': '#15803d',
+  Performance: '#a16207',
 };
 
 function utilisation(m, frames, workingSet) {
@@ -159,4 +252,123 @@ export function LocalityChart() {
   }, []);
 
   return <div className="native-diagram d3" ref={ref} aria-label="Working set timeline" />;
+}
+
+/** Interactive radial roadmap: D3 zoom/pan plus hover/focus tooltips. */
+export function D3MindMap() {
+  const wrapRef = useRef(null);
+  const canvasRef = useRef(null);
+  const controlsRef = useRef({ zoomIn() {}, zoomOut() {}, reset() {} });
+  const [tooltip, setTooltip] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadD3().then((d3) => {
+      if (cancelled || !canvasRef.current) return;
+
+      const width = 1000;
+      const height = 680;
+      const centre = [width / 2, height / 2];
+      const radius = 235;
+      const branchOf = (d) => d.ancestors().find((node) => node.depth === 1)?.data.name;
+
+      const svg = d3.select(canvasRef.current).selectAll('svg').data([null]).join('svg')
+        .attr('viewBox', `0 0 ${width} ${height}`)
+        .attr('role', 'img')
+        .attr('aria-label', 'Interactive memory-management mind map');
+      svg.selectAll('*').remove();
+
+      const viewport = svg.append('g').attr('class', 'mm-viewport');
+      const root = d3.hierarchy(MINDMAP_DATA);
+      d3.tree().size([2 * Math.PI, radius])(root);
+
+      viewport.append('g').attr('class', 'mm-links')
+        .selectAll('path').data(root.links()).join('path')
+        .attr('class', 'mm-link')
+        .attr('d', d3.linkRadial().angle((d) => d.x).radius((d) => d.y));
+
+      const angle = (d) => (d.x * 180) / Math.PI - 90;
+      const flip = (d) => (d.x > Math.PI ? ' rotate(180)' : '');
+      const node = viewport.append('g').attr('class', 'mm-nodes')
+        .selectAll('g').data(root.descendants()).join('g')
+        .attr('class', 'mm-node')
+        .attr('transform', (d) => {
+          if (d.depth === 0) return `translate(0,0)`;
+          const [x, y] = d3.pointRadial(d.x, d.y);
+          return `translate(${x},${y})`;
+        })
+        .attr('tabindex', 0)
+        .attr('role', 'button')
+        .attr('aria-label', (d) => `${d.data.name}: ${d.data.tip}`);
+
+      node.append('circle')
+        .attr('r', (d) => (d.depth === 0 ? 13 : d.depth === 1 ? 7 : 5))
+        .attr('fill', (d) => (d.depth === 0 ? LIGHT.text : BRANCH_COLOURS[branchOf(d)] || LIGHT.accent));
+
+      node.append('text')
+        .attr('class', 'mm-label')
+        .attr('transform', (d) => {
+          if (d.depth === 0) return 'translate(0,-22)';
+          return `rotate(${angle(d)})${flip(d)}`;
+        })
+        .attr('text-anchor', (d) => (d.depth === 0 ? 'middle' : d.x > Math.PI ? 'end' : 'start'))
+        .attr('dy', (d) => (d.depth === 0 ? 0 : '0.32em'))
+        .text((d) => d.data.name);
+
+      const showTooltip = (event, d) => {
+        const wrap = wrapRef.current.getBoundingClientRect();
+        const target = event.currentTarget.getBoundingClientRect();
+        setTooltip({
+          name: d.data.name,
+          tip: d.data.tip,
+          x: Math.max(135, Math.min(target.left - wrap.left + target.width / 2, wrap.width - 135)),
+          y: Math.max(8, Math.min(target.top - wrap.top + target.height + 10, wrap.height - 92)),
+        });
+        d3.select(event.currentTarget).classed('active', true);
+      };
+      const hideTooltip = (event) => {
+        setTooltip(null);
+        d3.select(event.currentTarget).classed('active', false);
+      };
+
+      node.on('mouseenter', showTooltip)
+        .on('mouseleave', hideTooltip)
+        .on('focus', showTooltip)
+        .on('blur', hideTooltip);
+
+      const initial = d3.zoomIdentity.translate(centre[0], centre[1]);
+      const zoom = d3.zoom()
+        .scaleExtent([0.6, 3])
+        .on('zoom', (event) => viewport.attr('transform', event.transform));
+      svg.call(zoom).on('dblclick.zoom', null).call(zoom.transform, initial);
+
+      const scaleBy = (factor) => svg.transition().duration(220).call(zoom.scaleBy, factor);
+      controlsRef.current = {
+        zoomIn: () => scaleBy(1.3),
+        zoomOut: () => scaleBy(1 / 1.3),
+        reset: () => svg.transition().duration(300).call(zoom.transform, initial),
+      };
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <div className="native-diagram d3 mindmap d3-mindmap" ref={wrapRef} aria-label="Interactive module mind map">
+      <div className="mm-canvas" ref={canvasRef} />
+      <div className="mindmap-controls" aria-label="Mind map zoom controls">
+        <button type="button" onClick={() => controlsRef.current.zoomIn()} aria-label="Zoom in">+</button>
+        <button type="button" onClick={() => controlsRef.current.zoomOut()} aria-label="Zoom out">−</button>
+        <button type="button" onClick={() => controlsRef.current.reset()} aria-label="Reset mind map view">Fit</button>
+        <span className="mindmap-hint">Drag to pan · scroll to zoom · hover for details</span>
+      </div>
+      {tooltip && (
+        <div className="mindmap-tooltip" style={{ left: tooltip.x, top: tooltip.y }} role="status" aria-live="polite">
+          <b>{tooltip.name}</b>
+          <span>{tooltip.tip}</span>
+        </div>
+      )}
+    </div>
+  );
 }

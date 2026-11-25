@@ -1,7 +1,7 @@
 import { ReactStage } from './ReactStages.jsx';
 import MermaidDiagram from './MermaidDiagram.jsx';
 import GraphvizDiagram from './GraphvizDiagram.jsx';
-import { LocalityChart, ThrashingChart } from './D3Charts.jsx';
+import { D3MindMap, LocalityChart, ThrashingChart } from './D3Charts.jsx';
 import './diagram.css';
 
 const reactStages = new Set([
@@ -14,7 +14,6 @@ const reactStages = new Set([
   'paging-hardware',
 ]);
 const mermaidStages = new Set([
-  'mindmap',
   'replacement',
   'thrashing-cycle',
   'cow-shared',
@@ -34,6 +33,7 @@ export function Diagram({ name }) {
   if (reactStages.has(name)) return <ReactStage name={name} />;
   if (mermaidStages.has(name)) return <MermaidDiagram name={name} />;
   if (graphvizStages.has(name)) return <GraphvizDiagram name={name} />;
+  if (name === 'mindmap') return <D3MindMap />;
   if (name === 'locality') return <LocalityChart />;
   if (name === 'thrashing-chart') return <ThrashingChart />;
   return <div className="diagram-error">Diagram not found: {name}</div>;

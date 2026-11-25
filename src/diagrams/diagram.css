@@ -34,19 +34,88 @@
   height: auto !important;
 }
 
-/* Mind maps are radial and already sized by Mermaid; stretching them magnifies text. */
-.native-diagram.mermaid.mindmap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px;
+/* D3 mind map: fixed canvas, zoom/pan viewport, and floating explanations. */
+.native-diagram.d3-mindmap {
+  position: relative;
+  height: 620px;
 }
 
-.native-diagram.mermaid.mindmap svg {
-  width: auto !important;
-  max-width: 100%;
-  height: auto !important;
+.mm-canvas { width: 100%; height: 100%; }
+
+.native-diagram.d3-mindmap svg {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
 }
+
+.native-diagram.d3-mindmap svg:active { cursor: grabbing; }
+
+.mm-link { fill: none; stroke: var(--border); stroke-width: 1.4; }
+.mm-node { cursor: help; }
+.mm-node circle { stroke: var(--panel); stroke-width: 2; transition: stroke-width .15s ease; }
+.mm-node.active circle { stroke: var(--text); stroke-width: 3.5; }
+
+.mm-label {
+  font: 600 11px Inter, ui-sans-serif, system-ui, sans-serif;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.mindmap-controls {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mindmap-controls button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.mindmap-controls button:hover { background: var(--panel-2); }
+.mindmap-controls button:nth-child(3) { width: 38px; font-size: 11px; }
+
+.mindmap-hint {
+  margin-left: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.mindmap-tooltip {
+  position: absolute;
+  z-index: 3;
+  width: 250px;
+  transform: translateX(-50%);
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+}
+
+.mindmap-tooltip b { display: block; margin-bottom: 4px; color: var(--text); font-size: 12px; }
+.mindmap-tooltip span { display: block; color: var(--muted); font-size: 11px; line-height: 1.45; }
 
 .native-diagram.mermaid svg .nodeLabel,
 .native-diagram.mermaid svg .edgeLabel {
