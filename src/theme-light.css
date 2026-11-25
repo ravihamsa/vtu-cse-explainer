@@ -51,7 +51,7 @@ code { background: rgba(15, 23, 42, 0.06); color: var(--accent); }
 .breadcrumb b { color: var(--accent); }
 
 /* Hero and cards */
-.hero h1 span { background: linear-gradient(100deg, #0f766e, #7c3aed); }
+.hero h1 span { background: none; color: var(--accent); -webkit-text-fill-color: currentColor; }
 .hero p { color: #33415c; }
 .tag { color: #3b4960; border-color: var(--border); background: rgba(15, 23, 42, 0.025); }
 .stat { background: linear-gradient(160deg, var(--panel), var(--panel-2)); border-color: var(--border); }
