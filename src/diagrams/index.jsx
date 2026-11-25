@@ -14,6 +14,7 @@ const reactStages = new Set([
   'paging-hardware',
 ]);
 const mermaidStages = new Set([
+  'mindmap',
   'replacement',
   'thrashing-cycle',
   'cow-shared',

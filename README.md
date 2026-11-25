@@ -9,7 +9,7 @@ All four tools are used, each for what it does best:
 | Tool | Used for | Source |
 |---|---|---|
 | React + CSS | Animated textbook stages (hierarchy, base/limit, binding, swapping, page faults, fragmentation, paging hardware) | `src/diagrams/ReactStages.jsx` |
-| Mermaid | Flow diagrams (replacement policy, thrashing cycle, copy-on-write states, allocation, NUMA) | `src/diagrams/MermaidDiagram.jsx` |
+| Mermaid | Roadmap mind map plus flow diagrams (replacement policy, thrashing cycle, copy-on-write states, allocation, NUMA) | `src/diagrams/MermaidDiagram.jsx` |
 | Graphviz (`@viz-js/viz` WASM) | Structured node diagrams (hierarchical/hashed/inverted page tables, segmentation, shared pages, TLB) | `src/diagrams/GraphvizDiagram.jsx` |
 | D3 | Data charts (CPU utilisation curve, working-set timeline) | `src/diagrams/D3Charts.jsx` |
 
@@ -23,15 +23,17 @@ Every bullet in `OS_Module4.pdf` is mapped to a concept. Gaps found in the first
 
 | PDF topic now explicit | Where |
 |---|---|
-| Logical vs physical address space, MMU, relocation-register example (14000 + 346) | §01 Big picture — *Logical vs physical address space* card |
-| Contiguous allocation mapping/protection, dispatcher loading base/limit, transient OS code | §04 Contiguous allocation — *Contiguous allocation in practice* card |
-| Swapping ready queue and transfer-time constraint | §03 Loading, linking & swapping — *Swapping details* card |
-| TLB benefits/costs, wired entries, ASID | §06 TLB — *Why TLBs matter* card |
-| Virtual memory benefits, virtual address space, pager vs swapper, pure demand paging | §08 Virtual memory — *Virtual memory at a glance* card |
-| Six page-fault handling steps | §08 — ordered walkthrough |
-| Page replacement sequence and count-based LFU/MFU rationale | §09 — *The replacement sequence* and *Count-based policies* cards |
-| Working set example `{1,2,5,6,7}` → `{3,4}` and balance set | §11 Thrashing — *Working set and balance set* card |
-| Extra worked problems 7–14 | §12 Practice (relocation, allocation strategies, segmentation, working set, frame allocation, page tables, TLB, dirty bit) |
+| Logical vs physical address space, MMU, relocation-register example (14000 + 346) | §02 Big picture — *Logical vs physical address space* card |
+| Contiguous allocation mapping/protection, dispatcher loading base/limit, transient OS code | §06 Contiguous allocation — *Contiguous allocation in practice* card |
+| Swapping ready queue and transfer-time constraint | §04 Loading, linking & swapping — *Swapping details* card |
+| TLB benefits/costs, wired entries, ASID | §08 TLB — *Why TLBs matter* card |
+| Virtual memory benefits, virtual address space, pager vs swapper, pure demand paging | §10 Virtual memory — *Virtual memory at a glance* card |
+| Six page-fault handling steps | §10 — ordered walkthrough |
+| Page replacement sequence and count-based LFU/MFU rationale | §11 — *The replacement sequence* and *Count-based policies* cards |
+| Working set example `{1,2,5,6,7}` → `{3,4}` and balance set | §13 Thrashing — *Working set and balance set* card |
+| Extra worked problems 7–14 | §14 Practice (relocation, allocation strategies, segmentation, working set, frame allocation, page tables, TLB, dirty bit) |
+
+The module now opens with a **Mermaid mind map** (§01) so students see how every topic connects before starting. A separate **conceptual questions** concept (§15) gives 15 explanation-style prompts to answer after the sections, before the randomised knowledge check.
 
 `src/content/quiz.js` expands the original 10-question check to **107 questions**, each with an explanatory answer, covering all of the above. The question order is shuffled with Fisher–Yates on every page load, while correct options stay balanced across A–D.
 
@@ -81,10 +83,10 @@ npm run build
 npm run preview
 # in another terminal, with Chrome running on --remote-debugging-port=9222:
 node scripts/check-layout.mjs   # reports diagram text outside its box or overlapping
-node scripts/smoke-test.mjs     # clicks through key simulations; expects 13/13
+node scripts/smoke-test.mjs     # clicks through key simulations; expects 15/15
 ```
 
-Current results: **18 native diagrams, 0 layout issues, 13/13 interaction checks, 0 runtime exceptions**. Verified values include FIFO/LRU/OPT behaviour, TLB EAT `140.0 ns`, fragmentation allocation, base/limit and segment traps, copy-on-write state switching, replacement stepping, and quiz feedback. The knowledge check now serves **107 questions** spanning every topic in the PDF.
+Current results: **19 native diagrams, 0 layout issues, 15/15 interaction checks, 0 runtime exceptions**. Verified values include FIFO/LRU/OPT behaviour, TLB EAT `140.0 ns`, fragmentation allocation, base/limit and segment traps, copy-on-write state switching, replacement stepping, and quiz feedback. The knowledge check now serves **107 questions** spanning every topic in the PDF.
 
 ## Deploying to GitHub Pages
 

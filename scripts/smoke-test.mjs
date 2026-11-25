@@ -49,6 +49,8 @@ const check = async (name, expression, expected) => {
 };
 
 await check('diagram svgs rendered', `document.querySelectorAll('.native-diagram svg').length`, (n) => n >= 11);
+await check('module mind map', `!!document.querySelector('.native-diagram.mindmap svg')`, true);
+await check('conceptual questions', `document.querySelectorAll('.concept-questions li').length`, 15);
 await check('replacement faults', `document.getElementById('rp-faults').textContent`, '12');
 await check('TLB EAT', `document.getElementById('eat-value').textContent`, '140.0 ns');
 await check('thrashing utilisation', `document.getElementById('th-util').textContent`, (v) => v.endsWith('%'));

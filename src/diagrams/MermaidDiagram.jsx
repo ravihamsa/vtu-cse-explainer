@@ -3,6 +3,44 @@ import { useEffect, useId, useRef, useState } from 'react';
 /* Flow diagrams: Mermaid's layout engine sizes every label before placing it,
    so long text wraps instead of overlapping. */
 const DEFINITIONS = {
+  mindmap: `mindmap
+    root((Memory management))
+      Hardware
+        Base and limit
+        MMU
+        Address spaces
+      Binding
+        Compile time
+        Load time
+        Execution time
+      Loading
+        Dynamic loading
+        Dynamic linking
+        Swapping
+      Partitioning
+        Contiguous allocation
+        Allocation strategies
+        Fragmentation
+      Paging
+        Pages and frames
+        Page tables
+        TLB
+        Shared pages
+      Segmentation
+        Segment table
+        Logical segments
+        External fragmentation
+      Virtual memory
+        Demand paging
+        Page faults
+        Copy on write
+        Replacement policies
+      Performance
+        Working set
+        Balance set
+        Fault frequency
+        Thrashing`,
+
   replacement: `flowchart LR
     A["Page fault"] --> B{"Free frame?"}
     B -- Yes --> C["Load page into frame"]

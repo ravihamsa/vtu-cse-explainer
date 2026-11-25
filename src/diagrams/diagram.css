@@ -34,6 +34,20 @@
   height: auto !important;
 }
 
+/* Mind maps are radial and already sized by Mermaid; stretching them magnifies text. */
+.native-diagram.mermaid.mindmap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+}
+
+.native-diagram.mermaid.mindmap svg {
+  width: auto !important;
+  max-width: 100%;
+  height: auto !important;
+}
+
 .native-diagram.mermaid svg .nodeLabel,
 .native-diagram.mermaid svg .edgeLabel {
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
