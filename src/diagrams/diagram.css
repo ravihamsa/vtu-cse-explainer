@@ -75,7 +75,7 @@
 .native-diagram.d3-mindmap svg:active { cursor: grabbing; }
 
 .mm-link { fill: none; }
-.mm-node { cursor: help; }
+.mm-node { cursor: pointer; }
 .mm-dot { stroke: var(--panel); stroke-width: 2; transition: stroke-width .15s ease; }
 .mm-node.active .mm-dot { stroke: var(--text); stroke-width: 3.5; }
 .mm-centre, .mm-halo { pointer-events: none; }
@@ -153,6 +153,7 @@
 
 .mindmap-tooltip b { display: block; margin-bottom: 4px; color: var(--text); font-size: 12px; }
 .mindmap-tooltip span { display: block; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.mindmap-tooltip .mm-tooltip-action { margin-top: 7px; color: var(--accent); font-weight: 600; }
 
 .native-diagram.mermaid svg .nodeLabel,
 .native-diagram.mermaid svg .edgeLabel {

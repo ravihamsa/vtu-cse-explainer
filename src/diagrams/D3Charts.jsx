@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { defaultRoute, routeToHash } from '../content/catalog.js';
 
 let d3Promise;
 function loadD3() {
@@ -20,82 +21,82 @@ const LIGHT = {
 };
 
 const MINDMAP_DATA = {
-  name: 'Memory management',
+  name: 'Memory management', concept: 'overview',
   tip: 'The OS gives every process a protected private address space, then maps it onto finite RAM.',
   children: [
     {
-      name: 'Hardware',
+      name: 'Hardware', concept: 'basics',
       tip: 'Registers and the MMU define legal addresses and translate them at run time.',
       children: [
-        { name: 'Base + limit', tip: 'Legal range is [base, base + limit); loading these registers is privileged.' },
-        { name: 'MMU', tip: 'Maps CPU-generated logical addresses to physical memory on every access.' },
-        { name: 'Address spaces', tip: 'Logical addresses belong to a process; physical addresses index RAM.' },
+        { name: 'Base + limit', concept: 'basics', tip: 'Legal range is [base, base + limit); loading these registers is privileged.' },
+        { name: 'MMU', concept: 'basics', tip: 'Maps CPU-generated logical addresses to physical memory on every access.' },
+        { name: 'Address spaces', concept: 'basics', tip: 'Logical addresses belong to a process; physical addresses index RAM.' },
       ],
     },
     {
-      name: 'Binding',
+      name: 'Binding', concept: 'binding',
       tip: 'The moment an address becomes physical decides how freely a process can move.',
       children: [
-        { name: 'Compile time', tip: 'Absolute code: fast, but any new load address forces recompilation.' },
-        { name: 'Load time', tip: 'Relocatable code: the loader fixes the starting address once.' },
-        { name: 'Execution time', tip: 'Dynamic relocation: the mapping can change while the process runs.' },
+        { name: 'Compile time', concept: 'binding', tip: 'Absolute code: fast, but any new load address forces recompilation.' },
+        { name: 'Load time', concept: 'binding', tip: 'Relocatable code: the loader fixes the starting address once.' },
+        { name: 'Execution time', concept: 'binding', tip: 'Dynamic relocation: the mapping can change while the process runs.' },
       ],
     },
     {
-      name: 'Loading',
+      name: 'Loading', concept: 'loading',
       tip: 'Only the work actually needed is brought into memory — at routine, library or process granularity.',
       children: [
-        { name: 'Dynamic loading', tip: 'A routine is loaded the first time it is called.' },
-        { name: 'Dynamic linking', tip: 'A stub resolves to a shared library routine already in memory.' },
-        { name: 'Swapping', tip: 'The whole process image moves between RAM and backing store.' },
+        { name: 'Dynamic loading', concept: 'loading', tip: 'A routine is loaded the first time it is called.' },
+        { name: 'Dynamic linking', concept: 'loading', tip: 'A stub resolves to a shared library routine already in memory.' },
+        { name: 'Swapping', concept: 'loading', tip: 'The whole process image moves between RAM and backing store.' },
       ],
     },
     {
-      name: 'Partitioning',
+      name: 'Partitioning', concept: 'fragmentation',
       tip: 'Contiguous placement is simple, but free space can become scattered.',
       children: [
-        { name: 'One block', tip: 'Contiguous allocation: each process gets one unbroken block of memory.' },
-        { name: 'Fit rules', tip: 'First fit, best fit and worst fit leave different hole patterns.' },
-        { name: 'Free holes', tip: 'Fragmentation: internal waste is inside a block; external waste is between blocks.' },
+        { name: 'One block', concept: 'fragmentation', tip: 'Contiguous allocation: each process gets one unbroken block of memory.' },
+        { name: 'Fit rules', concept: 'fragmentation', tip: 'First fit, best fit and worst fit leave different hole patterns.' },
+        { name: 'Free holes', concept: 'fragmentation', tip: 'Fragmentation: internal waste is inside a block; external waste is between blocks.' },
       ],
     },
     {
-      name: 'Paging',
+      name: 'Paging', concept: 'addressing',
       tip: 'Equal-size pages and frames remove external fragmentation and enable demand loading.',
       children: [
-        { name: 'Pages + frames', tip: 'A logical page fits into any free physical frame of the same size.' },
-        { name: 'Page tables', tip: 'Map page numbers to frame numbers; protection bits travel with them.' },
-        { name: 'TLB', tip: 'A small associative cache of recent translations avoids page-table walks.' },
-        { name: 'Shared pages', tip: 'Pure code can be mapped once and reused by many processes.' },
+        { name: 'Pages + frames', concept: 'paging', tip: 'A logical page fits into any free physical frame of the same size.' },
+        { name: 'Page tables', concept: 'addressing', tip: 'Map page numbers to frame numbers; protection bits travel with them.' },
+        { name: 'TLB', concept: 'tlb', tip: 'A small associative cache of recent translations avoids page-table walks.' },
+        { name: 'Shared pages', concept: 'tlb', tip: 'Pure code can be mapped once and reused by many processes.' },
       ],
     },
     {
-      name: 'Segmentation',
+      name: 'Segmentation', concept: 'segmentation',
       tip: 'Memory is divided by meaning — code, data, stack — with a base and limit per segment.',
       children: [
-        { name: 'Segment tbl', tip: 'Each entry gives the segment base address and its length.' },
-        { name: 'Regions', tip: 'Programmers see named, variable-length segments rather than fixed pages.' },
-        { name: 'External frag.', tip: 'Variable-length segments can leave unusable holes between them.' },
+        { name: 'Segment tbl', concept: 'segmentation', tip: 'Each entry gives the segment base address and its length.' },
+        { name: 'Regions', concept: 'segmentation', tip: 'Programmers see named, variable-length segments rather than fixed pages.' },
+        { name: 'External frag.', concept: 'segmentation', tip: 'Variable-length segments can leave unusable holes between them.' },
       ],
     },
     {
-      name: 'Virtual memory',
+      name: 'Virtual memory', concept: 'faults',
       tip: 'Processes see a large private memory; only the active parts need to be resident.',
       children: [
-        { name: 'Demand paging', tip: 'Pages are fetched on first reference, not at process start.' },
-        { name: 'Page faults', tip: 'Validity is checked, the page is read, tables update, then the instruction retries.' },
-        { name: 'COW', tip: 'After fork both processes share frames until one writes.' },
-        { name: 'Replacement', tip: 'FIFO, LRU, OPT, clock, LFU and MFU choose which page leaves.' },
+        { name: 'Demand paging', concept: 'faults', tip: 'Pages are fetched on first reference, not at process start.' },
+        { name: 'Page faults', concept: 'faults', tip: 'Validity is checked, the page is read, tables update, then the instruction retries.' },
+        { name: 'COW', concept: 'faults', tip: 'After fork both processes share frames until one writes.' },
+        { name: 'Replacement', concept: 'replacement', tip: 'FIFO, LRU, OPT, clock, LFU and MFU choose which page leaves.' },
       ],
     },
     {
-      name: 'Performance',
+      name: 'Performance', concept: 'thrashing',
       tip: 'Locality determines how many frames a process truly needs.',
       children: [
-        { name: 'Working set', tip: 'The pages actively used together in the current window of references.' },
-        { name: 'Active set', tip: 'Balance set: the active processes whose working sets are kept in memory.' },
-        { name: 'Fault frequency', tip: 'Too many faults means add frames; too few means reclaim one.' },
-        { name: 'Thrashing', tip: 'Fault storms replace pages before they can be used again.' },
+        { name: 'Working set', concept: 'thrashing', tip: 'The pages actively used together in the current window of references.' },
+        { name: 'Active set', concept: 'thrashing', tip: 'Balance set: the active processes whose working sets are kept in memory.' },
+        { name: 'Fault frequency', concept: 'thrashing', tip: 'Too many faults means add frames; too few means reclaim one.' },
+        { name: 'Thrashing', concept: 'thrashing', tip: 'Fault storms replace pages before they can be used again.' },
       ],
     },
   ],
@@ -314,7 +315,7 @@ export function D3MindMap() {
         })
         .attr('tabindex', 0)
         .attr('role', 'button')
-        .attr('aria-label', (d) => `${d.data.name}: ${d.data.tip}`);
+        .attr('aria-label', (d) => `${d.data.name}: ${d.data.tip}. Click to open the detailed section.`);
 
       const iconFor = (d) => (d.depth === 0 ? ICON_PATHS.root : d.depth === 1 ? ICON_PATHS[d.data.name] : null);
 
@@ -358,8 +359,9 @@ export function D3MindMap() {
         setTooltip({
           name: d.data.name,
           tip: d.data.tip,
+          concept: d.data.concept,
           x: Math.max(135, Math.min(target.left - wrap.left + target.width / 2, wrap.width - 135)),
-          y: Math.max(8, Math.min(target.top - wrap.top + target.height + 10, wrap.height - 92)),
+          y: Math.max(8, Math.min(target.top - wrap.top + target.height + 10, wrap.height - 108)),
         });
         d3.select(event.currentTarget).classed('active', true);
       };
@@ -367,11 +369,27 @@ export function D3MindMap() {
         setTooltip(null);
         d3.select(event.currentTarget).classed('active', false);
       };
+      const goToConcept = (event, d) => {
+        const concept = d.data.concept || d.ancestors().map((node) => node.data.concept).find(Boolean);
+        if (!concept) return;
+        event.preventDefault();
+        setTooltip(null);
+        window.location.hash = routeToHash({ ...defaultRoute, concept });
+        const target = document.getElementById(concept);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
 
       node.on('mouseenter', showTooltip)
         .on('mouseleave', hideTooltip)
         .on('focus', showTooltip)
-        .on('blur', hideTooltip);
+        .on('blur', hideTooltip)
+        .on('click', goToConcept)
+        .on('keydown', (event, d) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            goToConcept(event, d);
+          }
+        });
 
       const initial = d3.zoomIdentity.translate(centre[0], centre[1]);
       const zoom = d3.zoom()
@@ -398,12 +416,13 @@ export function D3MindMap() {
         <button type="button" onClick={() => controlsRef.current.zoomIn()} aria-label="Zoom in">+</button>
         <button type="button" onClick={() => controlsRef.current.zoomOut()} aria-label="Zoom out">−</button>
         <button type="button" onClick={() => controlsRef.current.reset()} aria-label="Reset mind map view">Fit</button>
-        <span className="mindmap-hint">Drag to pan · scroll to zoom · hover for details</span>
+        <span className="mindmap-hint">Drag to pan · scroll to zoom · click a node to jump to its section</span>
       </div>
       {tooltip && (
         <div className="mindmap-tooltip" style={{ left: tooltip.x, top: tooltip.y }} role="status" aria-live="polite">
           <b>{tooltip.name}</b>
           <span>{tooltip.tip}</span>
+          {tooltip.concept && <span className="mm-tooltip-action">Click to jump to the detailed section →</span>}
         </div>
       )}
     </div>

@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 /* Flow diagrams: Mermaid's layout engine sizes every label before placing it,
    so long text wraps instead of overlapping. */
 const DEFINITIONS = {
-  replacement: `flowchart LR
+  replacement: `flowchart TB
     A["Page fault"] --> B{"Free frame?"}
     B -- Yes --> C["Load page into frame"]
     B -- No --> D["Pick victim"]

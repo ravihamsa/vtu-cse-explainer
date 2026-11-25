@@ -58,6 +58,8 @@ await check('mind map zoom', `document.querySelector('.mm-viewport').getAttribut
 await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }))`);
 await check('mind map tooltip', `document.querySelector('.mindmap-tooltip b')?.textContent`, (v) => !!v);
 await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }))`);
+await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
+await check('mind map section link', `location.hash`, '#/s3/os/m4/overview');
 await check('glossary terms', `document.querySelectorAll('.glossary dt').length`, 24);
 await check('conceptual questions', `document.querySelectorAll('.concept-questions li').length`, 15);
 await check('replacement faults', `document.getElementById('rp-faults').textContent`, '12');
