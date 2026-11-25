@@ -112,6 +112,18 @@ const BRANCH_COLOURS = {
   Performance: '#a16207',
 };
 
+const ICON_PATHS = {
+  root: 'M-4,-4 h8 v8 h-8 Z M-6,-2 h2 M-6,0 h2 M-6,2 h2 M4,-2 h2 M4,0 h2 M4,2 h2 M-2,-6 v2 M0,-6 v2 M2,-6 v2 M-2,4 v2 M0,4 v2 M2,4 v2',
+  Hardware: 'M-3,-3 h6 v6 h-6 Z M-5,-1 h2 M-5,1 h2 M3,-1 h2 M3,1 h2 M-1,-5 v2 M1,-5 v2 M-1,3 v2 M1,3 v2',
+  Binding: 'M-3,1 a2,2 0 0 0 3,0 l2,-2 a2,2 0 0 0 -3,-3 l-1,1 M3,-1 a2,2 0 0 0 -3,0 l-2,2 a2,2 0 0 0 3,3 l1,-1',
+  Loading: 'M-4,-3 h8 v6 h-8 Z M-4,-1 h8 M-1,-3 v6 M1,0 l2,0 M2,-1 l1,1 l-1,1',
+  Partitioning: 'M-4,-4 h8 v8 h-8 Z M0,-4 v8 M-4,0 h8',
+  Paging: 'M-4,-4 h6 v6 h-6 Z M-2,-2 h6 v6 h-6 Z M-3,0 h3 M3,-3 h3',
+  Segmentation: 'M-5,-3 h10 M-4,0 h8 M-5,3 h10 M-4,-3 v6 M4,-3 v6',
+  'Virtual memory': 'M-4,1 a4,3 0 0 1 8,0 M-4,1 v2 a4,3 0 0 0 8,0 V1 M-4,1 h8',
+  Performance: 'M-4,3 a4,4 0 1 1 8,0 M0,3 l2,-3 M0,3 h1',
+};
+
 function utilisation(m, frames, workingSet) {
   if (frames >= workingSet) return Math.min(97, 96 * (1 - Math.exp(-0.36 * m)));
   const ratio = frames / workingSet;
@@ -285,7 +297,10 @@ export function D3MindMap() {
       viewport.append('g').attr('class', 'mm-links')
         .selectAll('path').data(root.links()).join('path')
         .attr('class', 'mm-link')
-        .attr('d', d3.linkRadial().angle((d) => d.x).radius((d) => d.y));
+        .attr('d', d3.linkRadial().angle((d) => d.x).radius((d) => d.y))
+        .attr('stroke', (d) => BRANCH_COLOURS[branchOf(d.target)] || LIGHT.accent)
+        .attr('stroke-width', (d) => (d.target.depth === 1 ? 2.2 : 1.3))
+        .attr('opacity', (d) => (d.target.depth === 1 ? 0.85 : 0.55));
 
       const angle = (d) => (d.x * 180) / Math.PI - 90;
       const flip = (d) => (d.x > Math.PI ? ' rotate(180)' : '');
@@ -301,15 +316,37 @@ export function D3MindMap() {
         .attr('role', 'button')
         .attr('aria-label', (d) => `${d.data.name}: ${d.data.tip}`);
 
+      const iconFor = (d) => (d.depth === 0 ? ICON_PATHS.root : d.depth === 1 ? ICON_PATHS[d.data.name] : null);
+
+      node.filter((d) => d.depth === 0).insert('circle', ':first-child')
+        .attr('class', 'mm-halo')
+        .attr('r', 21)
+        .attr('fill', 'none')
+        .attr('stroke', LIGHT.accent)
+        .attr('stroke-width', 2)
+        .attr('opacity', 0.3);
+
       node.append('circle')
-        .attr('r', (d) => (d.depth === 0 ? 13 : d.depth === 1 ? 7 : 5))
+        .attr('class', 'mm-dot')
+        .attr('r', (d) => (d.depth === 0 ? 16 : d.depth === 1 ? 10 : 5.5))
         .attr('fill', (d) => (d.depth === 0 ? LIGHT.text : BRANCH_COLOURS[branchOf(d)] || LIGHT.accent));
 
+      node.filter((d) => d.depth === 2).append('circle')
+        .attr('class', 'mm-centre')
+        .attr('r', 1.7)
+        .attr('fill', '#ffffff')
+        .attr('opacity', 0.85);
+
+      node.filter(iconFor).append('path')
+        .attr('class', 'mm-icon')
+        .attr('d', iconFor)
+        .attr('transform', (d) => `scale(${d.depth === 0 ? 1.15 : 0.95})`);
+
       node.append('text')
-        .attr('class', 'mm-label')
+        .attr('class', (d) => `mm-label ${d.depth === 0 ? 'mm-root-label' : d.depth === 1 ? 'mm-branch-label' : ''}`)
         .attr('transform', (d) => {
-          if (d.depth === 0) return 'translate(0,-22)';
-          return `rotate(${angle(d)})${flip(d)}`;
+          if (d.depth === 0) return 'translate(0,-27)';
+          return `rotate(${angle(d)}) translate(${d.depth === 1 ? 13 : 8},0)${flip(d)}`;
         })
         .attr('text-anchor', (d) => (d.depth === 0 ? 'middle' : d.x > Math.PI ? 'end' : 'start'))
         .attr('dy', (d) => (d.depth === 0 ? 0 : '0.32em'))

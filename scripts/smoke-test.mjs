@@ -50,6 +50,7 @@ const check = async (name, expression, expected) => {
 
 await check('diagram svgs rendered', `document.querySelectorAll('.native-diagram svg').length`, (n) => n >= 11);
 await check('module mind map', `!!document.querySelector('.native-diagram.d3-mindmap svg')`, true);
+await check('mind map icons', `document.querySelectorAll('.mm-icon').length`, 9);
 const beforeZoom = await evaluate(`document.querySelector('.mm-viewport').getAttribute('transform')`);
 await evaluate(`document.querySelector('[aria-label="Zoom in"]').click()`);
 await sleep(300);

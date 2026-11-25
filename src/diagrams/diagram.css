@@ -51,10 +51,21 @@
 
 .native-diagram.d3-mindmap svg:active { cursor: grabbing; }
 
-.mm-link { fill: none; stroke: var(--border); stroke-width: 1.4; }
+.mm-link { fill: none; }
 .mm-node { cursor: help; }
-.mm-node circle { stroke: var(--panel); stroke-width: 2; transition: stroke-width .15s ease; }
-.mm-node.active circle { stroke: var(--text); stroke-width: 3.5; }
+.mm-dot { stroke: var(--panel); stroke-width: 2; transition: stroke-width .15s ease; }
+.mm-node.active .mm-dot { stroke: var(--text); stroke-width: 3.5; }
+.mm-centre, .mm-halo { pointer-events: none; }
+.mm-halo { stroke-dasharray: 3 4; }
+
+.mm-icon {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
 
 .mm-label {
   font: 600 11px Inter, ui-sans-serif, system-ui, sans-serif;
@@ -65,6 +76,9 @@
   stroke-linejoin: round;
   pointer-events: none;
 }
+
+.mm-branch-label { font-size: 12px; font-weight: 700; }
+.mm-root-label { font-size: 13px; font-weight: 700; }
 
 .mindmap-controls {
   position: absolute;

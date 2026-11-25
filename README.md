@@ -11,7 +11,7 @@ All four tools are used, each for what it does best:
 | React + CSS | Animated textbook stages (hierarchy, base/limit, binding, swapping, page faults, fragmentation, paging hardware) | `src/diagrams/ReactStages.jsx` |
 | Mermaid | Flow diagrams (replacement policy, thrashing cycle, copy-on-write states, allocation, NUMA) | `src/diagrams/MermaidDiagram.jsx` |
 | Graphviz (`@viz-js/viz` WASM) | Structured node diagrams (hierarchical/hashed/inverted page tables, segmentation, shared pages, TLB) | `src/diagrams/GraphvizDiagram.jsx` |
-| D3 | Interactive zoom/pan module mind map with hover tooltips, plus data charts (CPU utilisation curve, working-set timeline) | `src/diagrams/D3Charts.jsx` |
+| D3 | Illustrated zoom/pan module mind map with branch icons, colours and hover tooltips, plus data charts (CPU utilisation curve, working-set timeline) | `src/diagrams/D3Charts.jsx` |
 
 No PNGs are shipped. Mermaid and Graphviz compute label-aware layouts, so text no longer overlaps the way it did in the screenshot-based diagrams. Graphviz SVGs render at their natural size (instead of being stretched to the column width) with extra node margin, so labels stay at a readable 11px with padding inside each shape. The old PNG generator is kept at `scripts/generate-diagrams.js` as a reference/fallback (`npm run diagrams` writes to `reference-diagrams/`, ignored by git).
 
@@ -33,7 +33,7 @@ Every bullet in `OS_Module4.pdf` is mapped to a concept. Gaps found in the first
 | Working set example `{1,2,5,6,7}` → `{3,4}` and balance set | §14 Thrashing — *Working set and balance set* card |
 | Extra worked problems 7–14 | §15 Practice (relocation, allocation strategies, segmentation, working set, frame allocation, page tables, TLB, dirty bit) |
 
-The module now opens with a **D3 mind map** (§01) that supports drag-to-pan, wheel/pinch zoom, zoom buttons and brief hover/focus tooltips, followed by a **glossary** (§02) of 24 key terms such as *contiguous*. A separate **conceptual questions** concept (§16) gives 15 explanation-style prompts to answer after the sections, before the randomised knowledge check.
+The module now opens with an **illustrated D3 mind map** (§01) that uses custom SVG icons and branch colours, and supports drag-to-pan, wheel/pinch zoom, zoom buttons and brief hover/focus tooltips, followed by a **glossary** (§02) of 24 key terms such as *contiguous*. A separate **conceptual questions** concept (§16) gives 15 explanation-style prompts to answer after the sections, before the randomised knowledge check.
 
 `src/content/quiz.js` expands the original 10-question check to **107 questions**, each with an explanatory answer, covering all of the above. The question order is shuffled with Fisher–Yates on every page load, while correct options stay balanced across A–D.
 
@@ -83,10 +83,10 @@ npm run build
 npm run preview
 # in another terminal, with Chrome running on --remote-debugging-port=9222:
 node scripts/check-layout.mjs   # reports diagram text outside its box or overlapping
-node scripts/smoke-test.mjs     # clicks through key simulations; expects 18/18
+node scripts/smoke-test.mjs     # clicks through key simulations; expects 19/19
 ```
 
-Current results: **19 native diagrams, 0 layout issues, 18/18 interaction checks, 0 runtime exceptions**. Verified values include D3 mind-map zoom and tooltips, glossary and conceptual-prompt counts, FIFO/LRU/OPT behaviour, TLB EAT `140.0 ns`, fragmentation allocation, base/limit and segment traps, copy-on-write state switching, replacement stepping, and quiz feedback. The knowledge check now serves **107 questions** spanning every topic in the PDF.
+Current results: **19 native diagrams, 0 layout issues, 19/19 interaction checks, 0 runtime exceptions**. Verified values include D3 mind-map zoom and tooltips, glossary and conceptual-prompt counts, FIFO/LRU/OPT behaviour, TLB EAT `140.0 ns`, fragmentation allocation, base/limit and segment traps, copy-on-write state switching, replacement stepping, and quiz feedback. The knowledge check now serves **107 questions** spanning every topic in the PDF.
 
 ## Deploying to GitHub Pages
 
