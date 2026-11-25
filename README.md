@@ -13,7 +13,7 @@ All four tools are used, each for what it does best:
 | Graphviz (`@viz-js/viz` WASM) | Structured node diagrams (hierarchical/hashed/inverted page tables, segmentation, shared pages, TLB) | `src/diagrams/GraphvizDiagram.jsx` |
 | D3 | Illustrated zoom/pan module mind map with branch icons, colours and hover tooltips, plus data charts (CPU utilisation curve, working-set timeline) | `src/diagrams/D3Charts.jsx` |
 
-No PNGs are shipped. Mermaid and Graphviz compute label-aware layouts, so text no longer overlaps the way it did in the screenshot-based diagrams. Graphviz SVGs render at their natural size (instead of being stretched to the column width) with extra node margin, so labels stay at a readable 11px with padding inside each shape. The old PNG generator is kept at `scripts/generate-diagrams.js` as a reference/fallback (`npm run diagrams` writes to `reference-diagrams/`, ignored by git).
+No PNGs are shipped. Mermaid and Graphviz compute label-aware layouts, so text no longer overlaps the way it did in the screenshot-based diagrams. Graphviz SVGs render at their natural size (instead of being stretched to the column width) with extra node margin, so labels stay at a readable 11px with padding inside each shape. Mermaid flowcharts also keep their natural size; wide horizontal flows scroll inside their card instead of shrinking labels to unreadable sizes. Narrow screens collapse fixed-width grids and stage layouts so sections no longer spill out. The old PNG generator is kept at `scripts/generate-diagrams.js` as a reference/fallback (`npm run diagrams` writes to `reference-diagrams/`, ignored by git).
 
 The app uses a light theme (`src/theme-light.css`) with high-contrast dark body text; it also restyles Mermaid, Graphviz and D3 outputs.
 

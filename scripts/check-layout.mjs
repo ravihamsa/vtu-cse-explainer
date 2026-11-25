@@ -19,7 +19,10 @@ const expression = `(() => {
   const roots = [...document.querySelectorAll('.native-diagram, .react-stage')];
   const issues = [];
   for (const root of roots) {
-    const rb = root.getBoundingClientRect();
+    /* Mermaid canvases are deliberately wider than the visible card; compare
+       text against the canvas so horizontal scrolling is not a false issue. */
+    const boundsEl = root.querySelector('.mermaid-canvas') || root;
+    const rb = boundsEl.getBoundingClientRect();
     const texts = [...root.querySelectorAll('text, .stage-node b, .stage-node span, .stage-node em, .hw-box b, .hw-bits span, .limit-zone b, .limit-zone span, .frag-side b, .frag-side span, .swap-panel b, .swap-panel span')]
       .filter((e) => e.textContent.trim() && !e.querySelector('text, b, span, em'));
     for (const el of texts) {

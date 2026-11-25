@@ -14,11 +14,34 @@
   max-width: 100%;
 }
 
-/* Mermaid and D3 are authored for the full width. Graphviz already computes a
-   label-aware natural size — stretching it makes the 11pt text look huge. */
-.native-diagram.mermaid svg,
+/* D3 charts fill their container. Graphviz already computes a label-aware
+   natural size — stretching it makes the 11pt text look huge. */
 .native-diagram.d3 svg {
   width: 100% !important;
+}
+
+/* Mermaid flowcharts keep their natural size so labels stay readable. Wide
+   diagrams scroll horizontally instead of being squeezed into tiny text. */
+.native-diagram.mermaid {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.mermaid-canvas {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: max-content;
+  min-width: 100%;
+  padding: 10px;
+}
+
+.native-diagram.mermaid svg {
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  flex: none;
 }
 
 .native-diagram.graphviz {
@@ -320,4 +343,12 @@
   .react-stage .stage-node { font-size: 8px; padding: 4px; }
   .react-stage .stage-node b { font-size: 9px; }
   .react-stage.fragmentation { aspect-ratio: auto; grid-template-columns: 1fr; }
+  .react-stage.paging-hardware {
+    aspect-ratio: auto;
+    flex-direction: column;
+    min-height: 300px;
+    padding: 12px;
+  }
+  .react-stage.paging-hardware .hw-box { width: 100%; min-width: 0; }
+  .react-stage.paging-hardware .hw-arrow { transform: rotate(90deg); }
 }

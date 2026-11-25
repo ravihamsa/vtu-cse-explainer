@@ -57,7 +57,7 @@ function loadMermaid() {
         startOnLoad: false,
         theme: 'base',
         securityLevel: 'loose',
-        flowchart: { htmlLabels: true, curve: 'basis', nodeSpacing: 40, rankSpacing: 55 },
+        flowchart: { htmlLabels: true, curve: 'basis', nodeSpacing: 40, rankSpacing: 55, useMaxWidth: false },
         themeVariables: {
           background: 'transparent',
           primaryColor: '#eef3fb',
@@ -115,5 +115,9 @@ export default function MermaidDiagram({ name }) {
     };
   }, [baseId, definition]);
 
-  return <div className={`native-diagram mermaid ${name}`} ref={ref} aria-label={`${name} flow diagram`} />;
+  return (
+    <div className={`native-diagram mermaid ${name}`} aria-label={`${name} flow diagram`}>
+      <div className="mermaid-canvas" ref={ref} />
+    </div>
+  );
 }
