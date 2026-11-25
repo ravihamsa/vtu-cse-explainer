@@ -1,0 +1,226 @@
+/* Native diagram layers: React/CSS stages, Mermaid flows, Graphviz structures, D3 charts */
+
+.native-diagram,
+.react-stage {
+  background: #111a2b;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.native-diagram svg {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+/* Mermaid and D3 are authored for the full width. Graphviz already computes a
+   label-aware natural size — stretching it makes the 11pt text look huge. */
+.native-diagram.mermaid svg,
+.native-diagram.d3 svg {
+  width: 100% !important;
+}
+
+.native-diagram.graphviz {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.native-diagram.graphviz svg {
+  width: auto !important;
+  max-width: 100%;
+  height: auto !important;
+}
+
+.native-diagram.mermaid svg .nodeLabel,
+.native-diagram.mermaid svg .edgeLabel {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.native-diagram.graphviz svg text {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+
+.diagram-error {
+  padding: 18px;
+  color: var(--rose);
+  font: 12px var(--mono);
+}
+
+.react-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 960 / 330;
+}
+
+.react-stage .stage-node {
+  position: absolute;
+  top: 25%;
+  height: 41.67%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: linear-gradient(160deg, var(--panel-2), var(--panel));
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.react-stage .stage-node b { color: var(--text); font-size: 11px; }
+.react-stage .stage-node .stage-index { color: #64748b; font-size: 9px; letter-spacing: 1px; }
+.react-stage .stage-node em { color: var(--amber); font-style: normal; font-size: 9px; }
+
+.react-stage.hierarchy .stage-node:nth-child(1) { left: 3.33%; width: 20.83%; }
+.react-stage.hierarchy .stage-node:nth-child(2) { left: 27.92%; width: 20.83%; }
+.react-stage.hierarchy .stage-node:nth-child(3) { left: 52.5%; width: 20.83%; }
+.react-stage.hierarchy .stage-node:nth-child(4) { left: 77.08%; width: 19.58%; border-color: rgba(251,113,133,.4); }
+
+.react-stage.binding .stage-node,
+.react-stage.page-fault .stage-node { top: 30.3%; height: 42.42%; }
+.react-stage.binding .stage-node:nth-child(1),
+.react-stage.page-fault .stage-node:nth-child(1) { left: 2.5%; width: 20.83%; }
+.react-stage.binding .stage-node:nth-child(2),
+.react-stage.page-fault .stage-node:nth-child(2) { left: 26.67%; width: 20.83%; }
+.react-stage.binding .stage-node:nth-child(3),
+.react-stage.page-fault .stage-node:nth-child(3) { left: 50.83%; width: 20.83%; }
+.react-stage.binding .stage-node:nth-child(4),
+.react-stage.page-fault .stage-node:nth-child(4) { left: 75%; width: 22.5%; }
+.react-stage.page-fault .stage-node { top: 28.13%; height: 37.5%; }
+.react-stage.page-fault .stage-node:nth-child(4) { border-color: rgba(251,113,133,.4); }
+
+.react-stage.base-limit { aspect-ratio: 960 / 300; display: flex; padding: 0; }
+.react-stage.base-limit .limit-zone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-align: center;
+}
+.react-stage.base-limit .below,
+.react-stage.base-limit .above {
+  width: 25%;
+  color: #ffc3cd;
+  background: repeating-linear-gradient(-45deg, rgba(251,113,133,.10) 0 8px, transparent 8px 16px);
+}
+.react-stage.base-limit .legal {
+  width: 50%;
+  color: #b8fff2;
+  background: linear-gradient(180deg, rgba(20,184,166,.28), rgba(13,148,136,.14));
+  border-left: 1px solid var(--accent);
+  border-right: 1px solid var(--accent);
+}
+.react-stage.base-limit .limit-zone span { font-size: 9px; color: var(--muted); }
+.react-stage.base-limit .limit-ticks {
+  position: absolute;
+  left: 0; right: 0; bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  font: 9px var(--mono);
+  color: #73839c;
+}
+
+.react-stage.swap { aspect-ratio: 960 / 280; }
+.react-stage.swap .swap-panel {
+  position: absolute;
+  top: 22%;
+  height: 56%;
+  width: 27%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.react-stage.swap .swap-panel.mem { left: 4%; border-color: rgba(94,234,212,.4); }
+.react-stage.swap .swap-panel.disk { left: 62%; border-color: rgba(251,113,133,.35); }
+.react-stage.swap .swap-panel span { font-size: 9px; color: var(--muted); }
+.react-stage.swap .swap-arrow {
+  position: absolute;
+  left: 32%; right: 32%; top: 45%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font: 9px var(--mono);
+}
+.react-stage.swap .swap-arrow i {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), var(--rose));
+  position: relative;
+}
+.react-stage.swap .swap-arrow i::after {
+  content: "";
+  position: absolute;
+  right: -1px; top: -4px;
+  border-left: 6px solid var(--rose);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+.react-stage.fragmentation { aspect-ratio: 960 / 340; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px; }
+.react-stage.fragmentation .frag-side { display: flex; flex-direction: column; justify-content: center; gap: 10px; font: 11px var(--mono); color: var(--muted); }
+.react-stage.fragmentation .frag-side b { color: var(--text); }
+.react-stage.fragmentation .frag-row { display: flex; height: 56px; gap: 4px; }
+.react-stage.fragmentation .frag-row i {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  font-style: normal;
+  font-size: 10px;
+}
+.react-stage.fragmentation .used { background: rgba(20,184,166,.35); color: #b8fff2; }
+.react-stage.fragmentation .waste { background: repeating-linear-gradient(-45deg, rgba(251,191,36,.4) 0 4px, transparent 4px 8px); color: var(--amber); }
+.react-stage.fragmentation .hole { border: 1px dashed #64748b; background: rgba(255,255,255,.03); }
+
+.react-stage.paging-hardware { aspect-ratio: 960 / 300; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 18px; }
+.react-stage.paging-hardware .hw-box {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel);
+  text-align: center;
+  font: 11px var(--mono);
+}
+.react-stage.paging-hardware .hw-box b { display: block; margin-bottom: 10px; color: var(--text); }
+.react-stage.paging-hardware .hw-bits,
+.react-stage.paging-hardware .hw-table { display: flex; flex-direction: column; gap: 5px; }
+.react-stage.paging-hardware .hw-bits span {
+  padding: 6px;
+  border-radius: 5px;
+  background: rgba(167,139,250,.17);
+  color: #d6c8ff;
+}
+.react-stage.paging-hardware .hw-bits span.off { background: rgba(94,234,212,.12); color: var(--accent); }
+.react-stage.paging-hardware .hw-table i {
+  font-style: normal;
+  padding: 5px;
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  color: var(--muted);
+}
+.react-stage.paging-hardware .hw-arrow { color: var(--accent); font-size: 20px; }
+
+@media (max-width: 700px) {
+  .react-stage .stage-node { font-size: 8px; padding: 4px; }
+  .react-stage .stage-node b { font-size: 9px; }
+  .react-stage.fragmentation { aspect-ratio: auto; grid-template-columns: 1fr; }
+}
