@@ -31,7 +31,7 @@ body {
 }
 
 /* Chrome */
-aside { background: rgba(255, 255, 255, 0.82); border-right-color: var(--border-soft); }
+.layout > aside { background: rgba(255, 255, 255, 0.82); border-right-color: var(--border-soft); }
 .brand-mark { background: linear-gradient(135deg, var(--accent-dim), var(--violet-dim)); border-color: var(--border); }
 .side-label, .side-group-title, .side-foot { color: #55627a; }
 nav a { color: var(--muted); }
@@ -170,12 +170,12 @@ body .react-stage.paging-hardware .hw-table i { border-color: var(--border-soft)
 footer { color: #55627a; }
 
 @media (max-width: 980px) {
-  aside { border-bottom-color: var(--border-soft); }
+  .layout > aside { border-bottom-color: var(--border-soft); }
 }
 
 @media print {
   body { background: #ffffff !important; color: #111111 !important; }
-  aside, #progress, .controls, footer { display: none !important; }
+  .layout > aside, #progress, .controls, footer { display: none !important; }
   .card, .mini, .stat { break-inside: avoid; }
   main { padding: 0; }
 }

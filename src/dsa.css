@@ -30,6 +30,10 @@
 .dsa-list-block ul { margin: 0; padding-left: 20px; color: var(--muted); }
 .dsa-list-block li { margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
 
+/* These are semantic <aside> elements inside <main>, not the sticky sidebar. */
+.dsa-callout,
+.dsa-example { position: static; height: auto; overflow: visible; }
+
 .dsa-callout {
   margin: 20px 0; padding: 15px 18px; border-left: 3px solid var(--accent);
   border-radius: 0 12px 12px 0; background: rgba(15, 118, 110, 0.07);
