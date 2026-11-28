@@ -1,17 +1,24 @@
 import { useEffect, useMemo, useState } from 'react';
-import { catalog, defaultRoute, parseHash, routeToHash } from './content/catalog.js';
+import {
+  catalog,
+  defaultRoute,
+  describeRoute,
+  parseHash,
+  routeToHash,
+} from './content/catalog.js';
 import { sectionIds } from './content/sections.js';
 import { sectionComponents } from './sections/index.js';
+import DsaLesson from './components/DsaLesson.jsx';
 import { mountExplainer } from './legacy/explainer.js';
 
-function Sidebar({ activeConcept }) {
+function Sidebar({ activeRoute }) {
   return (
     <aside>
       <div className="brand">
         <div className="brand-mark">▦</div>
         <div>
           <h1>VTU Explainer</h1>
-          <small>Operating Systems · Sem 3</small>
+          <small>Semester 3 · OS + DS</small>
         </div>
       </div>
       <div className="side-label">Browse by course structure</div>
@@ -33,12 +40,11 @@ function Sidebar({ activeConcept }) {
                           module: module.id,
                           concept: concept.id,
                         });
+                        const active = concept.id === activeRoute.concept
+                          && module.id === activeRoute.module
+                          && subject.id === activeRoute.subject;
                         return (
-                          <a
-                            key={concept.id}
-                            href={hash}
-                            className={concept.id === activeConcept ? 'active' : undefined}
-                          >
+                          <a key={concept.id} href={hash} className={active ? 'active' : undefined}>
                             <span className="num">{concept.number}</span>
                             {concept.label}
                           </a>
@@ -65,6 +71,12 @@ export default function App() {
   const [route, setRoute] = useState(() => parseHash(window.location.hash));
   const [activeConcept, setActiveConcept] = useState(route.concept);
   const [progress, setProgress] = useState(0);
+  const details = useMemo(() => describeRoute(route), [route]);
+  const isOs = route.subject === 'os';
+  const activeIds = useMemo(
+    () => (isOs ? sectionIds : details.module.concepts.map((concept) => concept.id)),
+    [isOs, details.module]
+  );
 
   useEffect(() => {
     if (!window.location.hash) {
@@ -75,10 +87,12 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
+  // The legacy OS controller owns all OS demos; it must not touch DSA markup.
   useEffect(() => {
+    if (route.subject !== 'os') return undefined;
     const dispose = mountExplainer();
     return dispose;
-  }, []);
+  }, [route.subject]);
 
   useEffect(() => {
     const target = document.getElementById(route.concept);
@@ -91,8 +105,8 @@ export default function App() {
       const root = document.documentElement;
       const max = root.scrollHeight - root.clientHeight;
       setProgress(max > 0 ? (root.scrollTop / max) * 100 : 0);
-      let current = sectionIds[0];
-      for (const id of sectionIds) {
+      let current = activeIds[0];
+      for (const id of activeIds) {
         const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= 140) current = id;
       }
@@ -101,25 +115,30 @@ export default function App() {
     window.addEventListener('scroll', update, { passive: true });
     update();
     return () => window.removeEventListener('scroll', update);
-  }, []);
+  }, [activeIds]);
 
-  const breadcrumb = useMemo(() => {
-    const module = catalog.semesters[0].subjects[0].modules[0];
-    const concept = module.concepts.find((c) => c.id === route.concept) || module.concepts[0];
-    return `${catalog.semesters[0].label} › ${catalog.semesters[0].subjects[0].label} › ${module.label} › ${concept.label}`;
-  }, [route.concept]);
+  const breadcrumb = `${details.semester.label} › ${details.subject.label} › ${details.module.label} › ${details.concept.label}`;
 
   return (
     <>
       <div id="progress" style={{ width: `${progress}%` }} />
       <div className="layout">
-        <Sidebar activeConcept={activeConcept} />
+        <Sidebar activeRoute={route} />
         <main>
           <div className="breadcrumb"><b>Current concept</b> {breadcrumb}</div>
-          {sectionComponents.map(({ id, Component }) => (
-            <Component key={id} />
-          ))}
-          <footer>Built for VTU CSE semester 3 · Operating Systems · Module 4. Extend from <code>src/content/catalog.js</code>.</footer>
+          {isOs ? (
+            sectionComponents.map(({ id, Component }) => <Component key={id} />)
+          ) : (
+            details.module.concepts.map((concept) => (
+              <DsaLesson
+                key={concept.id}
+                route={{ ...route, concept: concept.id }}
+              />
+            ))
+          )}
+          <footer>
+            Built for VTU CSE semester 3 · {details.subject.label} · {details.module.label}. Extend from <code>src/content/catalog.js</code>.
+          </footer>
         </main>
       </div>
     </>

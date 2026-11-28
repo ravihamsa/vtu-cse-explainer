@@ -268,7 +268,13 @@ export function LocalityChart() {
 }
 
 /** Interactive radial roadmap: D3 zoom/pan plus hover/focus tooltips. */
-export function D3MindMap() {
+export function D3MindMap({
+  data = MINDMAP_DATA,
+  branchColours = BRANCH_COLOURS,
+  icons = ICON_PATHS,
+  route = defaultRoute,
+  label = 'Interactive memory-management mind map',
+}) {
   const wrapRef = useRef(null);
   const canvasRef = useRef(null);
   const controlsRef = useRef({ zoomIn() {}, zoomOut() {}, reset() {} });
@@ -284,22 +290,23 @@ export function D3MindMap() {
       const centre = [width / 2, height / 2];
       const radius = 235;
       const branchOf = (d) => d.ancestors().find((node) => node.depth === 1)?.data.name;
+      const colourOf = (d) => branchColours[branchOf(d)] || LIGHT.accent;
 
       const svg = d3.select(canvasRef.current).selectAll('svg').data([null]).join('svg')
         .attr('viewBox', `0 0 ${width} ${height}`)
         .attr('role', 'img')
-        .attr('aria-label', 'Interactive memory-management mind map');
+        .attr('aria-label', label);
       svg.selectAll('*').remove();
 
       const viewport = svg.append('g').attr('class', 'mm-viewport');
-      const root = d3.hierarchy(MINDMAP_DATA);
+      const root = d3.hierarchy(data);
       d3.tree().size([2 * Math.PI, radius])(root);
 
       viewport.append('g').attr('class', 'mm-links')
         .selectAll('path').data(root.links()).join('path')
         .attr('class', 'mm-link')
         .attr('d', d3.linkRadial().angle((d) => d.x).radius((d) => d.y))
-        .attr('stroke', (d) => BRANCH_COLOURS[branchOf(d.target)] || LIGHT.accent)
+        .attr('stroke', (d) => branchColours[branchOf(d.target)] || LIGHT.accent)
         .attr('stroke-width', (d) => (d.target.depth === 1 ? 2.2 : 1.3))
         .attr('opacity', (d) => (d.target.depth === 1 ? 0.85 : 0.55));
 
@@ -317,7 +324,7 @@ export function D3MindMap() {
         .attr('role', 'button')
         .attr('aria-label', (d) => `${d.data.name}: ${d.data.tip}. Click to open the detailed section.`);
 
-      const iconFor = (d) => (d.depth === 0 ? ICON_PATHS.root : d.depth === 1 ? ICON_PATHS[d.data.name] : null);
+      const iconFor = (d) => (d.depth === 0 ? icons.root : d.depth === 1 ? icons[d.data.name] : null);
 
       node.filter((d) => d.depth === 0).insert('circle', ':first-child')
         .attr('class', 'mm-halo')
@@ -330,7 +337,7 @@ export function D3MindMap() {
       node.append('circle')
         .attr('class', 'mm-dot')
         .attr('r', (d) => (d.depth === 0 ? 16 : d.depth === 1 ? 10 : 5.5))
-        .attr('fill', (d) => (d.depth === 0 ? LIGHT.text : BRANCH_COLOURS[branchOf(d)] || LIGHT.accent));
+        .attr('fill', (d) => (d.depth === 0 ? LIGHT.text : colourOf(d)));
 
       node.filter((d) => d.depth === 2).append('circle')
         .attr('class', 'mm-centre')
@@ -374,7 +381,7 @@ export function D3MindMap() {
         if (!concept) return;
         event.preventDefault();
         setTooltip(null);
-        window.location.hash = routeToHash({ ...defaultRoute, concept });
+        window.location.hash = routeToHash({ ...route, concept });
         const target = document.getElementById(concept);
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
@@ -407,7 +414,7 @@ export function D3MindMap() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [data, branchColours, icons, label, route.semester, route.subject, route.module]);
 
   return (
     <div className="native-diagram d3 mindmap d3-mindmap" ref={wrapRef} aria-label="Interactive module mind map">

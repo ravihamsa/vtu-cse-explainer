@@ -1,3 +1,5 @@
+import { dsaModuleIds, dsaModules } from './dsa.js';
+
 /**
  * Content catalog. New semesters, subjects, modules and concepts are added here;
  * navigation and routing are generated from this tree.
@@ -38,6 +40,19 @@ export const catalog = {
             },
           ],
         },
+        {
+          id: 'ds',
+          label: 'Data Structures',
+          modules: dsaModuleIds.map((id) => ({
+            id,
+            label: dsaModules[id].label,
+            concepts: dsaModules[id].concepts.map((concept) => ({
+              id: concept.id,
+              label: concept.label,
+              number: concept.number,
+            })),
+          })),
+        },
       ],
     },
   ],
@@ -65,4 +80,13 @@ export function parseHash(hash) {
 
 export function routeToHash(route) {
   return `#/${route.semester}/${route.subject}/${route.module}/${route.concept}`;
+}
+
+/** Resolve a route to its semester, subject, module and concept objects. */
+export function describeRoute(route) {
+  const semester = catalog.semesters.find((s) => s.id === route.semester) || catalog.semesters[0];
+  const subject = semester.subjects.find((s) => s.id === route.subject) || semester.subjects[0];
+  const module = subject.modules.find((m) => m.id === route.module) || subject.modules[0];
+  const concept = module.concepts.find((c) => c.id === route.concept) || module.concepts[0];
+  return { semester, subject, module, concept };
 }

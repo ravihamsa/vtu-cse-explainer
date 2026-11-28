@@ -38,6 +38,7 @@ const evaluate = async (expression) => {
 
 await send('Runtime.enable');
 await send('Page.enable');
+await send('Page.navigate', { url: 'http://127.0.0.1:4173/#/s3/os/m4/overview' });
 await send('Page.reload', { ignoreCache: true });
 await sleep(3500);
 
@@ -101,6 +102,21 @@ await check('quiz bank size', `document.querySelectorAll('#q-progress i').length
 await evaluate(`document.querySelector('#quiz .opt').click()`);
 await sleep(100);
 await check('quiz feedback', `document.getElementById('q-feedback').textContent.length`, (n) => n > 20);
+
+/* Data Structures subject: route switch, module content, quiz and mind map links. */
+await evaluate(`location.hash = '#/s3/ds/m2/dsa-m2-quiz'`);
+await sleep(1200);
+await check('dsa route', `document.querySelector('.breadcrumb').textContent`, (v) => v.includes('Data Structures') && v.includes('Stacks, Queues'));
+await check('dsa module sections', `document.querySelectorAll('section.dsa-lesson').length`, 14);
+await check('dsa quiz options', `document.querySelectorAll('.dsa-q-option').length`, 4);
+await evaluate(`document.querySelector('.dsa-q-option').click()`);
+await sleep(100);
+await check('dsa quiz feedback', `document.querySelector('.dsa-q-feedback')?.textContent.length`, (n) => n > 20);
+await evaluate(`location.hash = '#/s3/ds/m2/dsa-m2-mindmap'`);
+await sleep(1500);
+await check('dsa mind map', `!!document.querySelector('.native-diagram.d3-mindmap svg')`, true);
+await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
+await check('dsa mind map section link', `location.hash`, '#/s3/ds/m2/dsa-m2-overview');
 checks.push({ name: 'no runtime exceptions', ok: exceptions.length === 0, value: exceptions.length });
 
 socket.close();

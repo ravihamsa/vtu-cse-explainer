@@ -47,6 +47,89 @@ const DEFINITIONS = {
     end
     C0 -. "slower over interconnect" .-> R1
     C1 -. "slower over interconnect" .-> R0`,
+
+  /* Data Structures flow diagrams */
+  'dsa-lifo-fifo': `flowchart TB
+    A["New item arrives"] --> B{"Service rule?"}
+    B -- "Most recent first" --> C["Stack: push / pop at TOP"]
+    B -- "Oldest first" --> D["Queue: enqueue at rear, dequeue at front"]
+    C --> E["Undo, call stack, expression"]
+    D --> F["Tickets, scheduling, buffering"]`,
+
+  'dsa-dma-flow': `flowchart TB
+    A["Need size at run time"] --> B["malloc / calloc"]
+    B --> C{"Allocation succeeded?"}
+    C -- No --> D["Handle NULL"]
+    C -- Yes --> E["Use the heap block"]
+    E --> F{"Size must change?"}
+    F -- Yes --> G["realloc"]
+    F -- No --> H["free and set pointer to NULL"]`,
+
+  'dsa-insertion-flow': `flowchart TB
+    A["Start with sorted prefix"] --> B["Take next key"]
+    B --> C["Compare with left neighbour"]
+    C --> D{"Neighbour larger?"}
+    D -- Yes --> E["Shift neighbour right"]
+    E --> C
+    D -- No --> F["Place key in the gap"]
+    F --> G{"More keys?"}
+    G -- Yes --> B
+    G -- No --> H["Array is sorted"]`,
+
+  'dsa-radix-flow': `flowchart TB
+    A["Unsorted fixed-width numbers"] --> B["Pass 1: ones digit"]
+    B --> C["Collect in buckets 0-9"]
+    C --> D["Empty buckets in order"]
+    D --> E["Pass 2: tens digit"]
+    E --> D
+    D --> F["Pass 3: hundreds digit"]
+    F --> G["Sorted list"]`,
+
+  'dsa-infix-flow': `flowchart TB
+    A["Scan next token"] --> B{"Operand?"}
+    B -- Yes --> C["Write to output"]
+    B -- No --> D{"Left parenthesis?"}
+    D -- Yes --> E["Push onto stack"]
+    D -- No --> F{"Right parenthesis?"}
+    F -- Yes --> G["Pop until left parenthesis"]
+    F -- No --> H["Pop while ISP >= ICP"]
+    H --> I["Push operator"]
+    C --> J{"More tokens?"}
+    E --> J
+    G --> J
+    I --> J
+    J -- Yes --> A
+    J -- No --> K["Pop remaining operators"]`,
+
+  'dsa-postfix-flow': `flowchart TB
+    A["Scan next token"] --> B{"Number?"}
+    B -- Yes --> C["Push number"]
+    B -- No --> D["Pop right operand"]
+    D --> E["Pop left operand"]
+    E --> F["Apply operator"]
+    F --> G["Push result"]
+    C --> H{"More tokens?"}
+    G --> H
+    H -- Yes --> A
+    H -- No --> I["Final stack value"]`,
+
+  'dsa-traversal-flow': `flowchart TB
+    A["Pick a traversal"] --> B{"Where does the root go?"}
+    B -- First --> C["Preorder: N-L-R"]
+    B -- Middle --> D["Inorder: L-N-R"]
+    B -- Last --> E["Postorder: L-R-N"]
+    B -- By depth --> F["Level order with a queue"]`,
+
+  'dsa-bst-search': `flowchart TB
+    A["Compare key with node"] --> B{"Equal?"}
+    B -- Yes --> C["Found"]
+    B -- No --> D{"Smaller?"}
+    D -- Yes --> E["Go left"]
+    D -- No --> F["Go right"]
+    E --> G{"Null child?"}
+    F --> G
+    G -- Yes --> H["Not found / insert here"]
+    G -- No --> A`,
 };
 
 let mermaidPromise;

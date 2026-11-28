@@ -4,6 +4,8 @@ import GraphvizDiagram from './GraphvizDiagram.jsx';
 import { D3MindMap, LocalityChart, ThrashingChart } from './D3Charts.jsx';
 import './diagram.css';
 
+export { D3MindMap };
+
 const reactStages = new Set([
   'hierarchy',
   'base-limit',
@@ -19,6 +21,14 @@ const mermaidStages = new Set([
   'cow-shared',
   'allocation',
   'numa',
+  'dsa-lifo-fifo',
+  'dsa-dma-flow',
+  'dsa-insertion-flow',
+  'dsa-radix-flow',
+  'dsa-infix-flow',
+  'dsa-postfix-flow',
+  'dsa-traversal-flow',
+  'dsa-bst-search',
 ]);
 const graphvizStages = new Set([
   'ptab-hier',
@@ -27,13 +37,23 @@ const graphvizStages = new Set([
   'segmentation',
   'shared-pages',
   'tlb',
+  'dsa-pointer-chain',
+  'dsa-array-map',
+  'dsa-circular-queue',
+  'dsa-sll',
+  'dsa-header-list',
+  'dsa-circular-list',
+  'dsa-dll',
+  'dsa-general-tree',
+  'dsa-binary-tree',
+  'dsa-threaded-tree',
 ]);
 
-export function Diagram({ name }) {
+export function Diagram({ name, ...props }) {
   if (reactStages.has(name)) return <ReactStage name={name} />;
   if (mermaidStages.has(name)) return <MermaidDiagram name={name} />;
   if (graphvizStages.has(name)) return <GraphvizDiagram name={name} />;
-  if (name === 'mindmap') return <D3MindMap />;
+  if (name === 'mindmap' || name === 'dsa-mindmap') return <D3MindMap {...props} />;
   if (name === 'locality') return <LocalityChart />;
   if (name === 'thrashing-chart') return <ThrashingChart />;
   return <div className="diagram-error">Diagram not found: {name}</div>;

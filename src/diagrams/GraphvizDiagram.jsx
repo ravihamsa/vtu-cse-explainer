@@ -81,6 +81,121 @@ const DEFINITIONS = {
     tlb -> miss -> pt -> ram;
     hit -> ram;
   }`,
+
+  /* Data Structures structures */
+  'dsa-pointer-chain': `digraph G {
+    rankdir=LR;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    pp [label="pp\\npointer to pointer"];
+    p [label="p\\npointer to x"];
+    x [label="x = 50\\ninteger" fillcolor="#123b37" color="#5eead4"];
+    pp -> p [label="holds &p"];
+    p -> x [label="holds &x"];
+  }`,
+  'dsa-array-map': `digraph G {
+    rankdir=LR;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    grid [label="A[3][2]\\nrow 0: 11 12\\nrow 1: 21 22\\nrow 2: 31 32"];
+    formula [label="Row major\\nbase + (i×2 + j)×size" shape=ellipse fillcolor="#3b2d6b" color="#a78bfa"];
+    memory [label="Linear memory\\n11 | 12 | 21 | 22 | 31 | 32" fillcolor="#123b37" color="#5eead4"];
+    grid -> formula -> memory;
+  }`,
+  'dsa-circular-queue': `digraph G {
+    rankdir=LR;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    s0 [label="[0]\\nfree"];
+    s1 [label="[1]\\nrear → D" fillcolor="#123b37" color="#5eead4"];
+    s2 [label="[2]\\nfree"];
+    s3 [label="[3]\\nfront → A"];
+    s4 [label="[4]\\nB"];
+    s0 -> s1 -> s2 -> s3 -> s4 -> s0;
+  }`,
+  'dsa-sll': `digraph G {
+    rankdir=LR;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    head [label="HEAD" shape=ellipse fillcolor="#3b2d6b" color="#a78bfa"];
+    n1 [label="10 | next"];
+    n2 [label="20 | next"];
+    n3 [label="30 | next"];
+    nil [label="NULL" shape=ellipse fillcolor="#3f1d2b" color="#fb7185"];
+    head -> n1 -> n2 -> n3 -> nil;
+  }`,
+  'dsa-header-list': `digraph G {
+    rankdir=LR;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    head [label="HEAD" shape=ellipse fillcolor="#3b2d6b" color="#a78bfa"];
+    sentinel [label="header\\nsentinel" fillcolor="#3b2d6b" color="#a78bfa"];
+    n1 [label="10 | next"];
+    n2 [label="20 | next"];
+    nil [label="NULL" shape=ellipse fillcolor="#3f1d2b" color="#fb7185"];
+    head -> sentinel -> n1 -> n2 -> nil;
+  }`,
+  'dsa-circular-list': `digraph G {
+    rankdir=LR;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    last [label="last" shape=ellipse fillcolor="#3b2d6b" color="#a78bfa"];
+    n1 [label="10"];
+    n2 [label="20"];
+    n3 [label="30"];
+    last -> n3 [label="points to last" style=dashed];
+    n1 -> n2 -> n3 -> n1;
+  }`,
+  'dsa-dll': `digraph G {
+    rankdir=LR;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    head [label="HEAD" shape=ellipse fillcolor="#3b2d6b" color="#a78bfa"];
+    h [label="header\\ncount = 3" fillcolor="#3b2d6b" color="#a78bfa"];
+    n1 [label="10"];
+    n2 [label="20"];
+    n3 [label="30"];
+    nil [label="NULL" shape=ellipse fillcolor="#3f1d2b" color="#fb7185"];
+    head -> h -> n1 -> n2 -> n3 -> nil;
+    n1 -> h [dir=back];
+    n2 -> n1 [dir=back];
+    n3 -> n2 [dir=back];
+  }`,
+  'dsa-general-tree': `digraph G {
+    rankdir=TB;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    a [label="A\\nroot" fillcolor="#123b37" color="#5eead4"];
+    b [label="B"]; c [label="C"]; d [label="D"];
+    e [label="E"]; f [label="F"]; g [label="G"]; h [label="H"]; i [label="I"];
+    a -> b; a -> c; a -> d;
+    b -> e; b -> f;
+    c -> g; c -> h;
+    d -> i;
+  }`,
+  'dsa-binary-tree': `digraph G {
+    rankdir=TB;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    n10 [label="10\\nroot" fillcolor="#123b37" color="#5eead4"];
+    n5 [label="5"]; n15 [label="15"];
+    n2 [label="2"]; n7 [label="7"]; n12 [label="12"]; n18 [label="18"];
+    n10 -> n5; n10 -> n15;
+    n5 -> n2; n5 -> n7;
+    n15 -> n12; n15 -> n18;
+  }`,
+  'dsa-threaded-tree': `digraph G {
+    rankdir=TB;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    head [label="head node" shape=ellipse fillcolor="#3b2d6b" color="#a78bfa"];
+    b [label="B"]; d [label="D"]; e [label="E"]; a [label="A"]; c [label="C"];
+    head -> b [style=dashed label="thread start"];
+    b -> d; b -> e; a -> b [style=dashed]; a -> c [style=dashed];
+    d -> e [style=dashed label="thread" color="#fbbf24" fontcolor="#b45309"];
+    e -> a [style=dashed label="thread" color="#fbbf24" fontcolor="#b45309"];
+    c -> head [style=dashed label="thread" color="#fbbf24" fontcolor="#b45309"];
+  }`,
 };
 
 /* DOT definitions are kept in the original dark palette; remap them for the light theme. */
