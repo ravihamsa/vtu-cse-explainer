@@ -196,6 +196,36 @@ const DEFINITIONS = {
     e -> a [style=dashed label="thread" color="#fbbf24" fontcolor="#b45309"];
     c -> head [style=dashed label="thread" color="#fbbf24" fontcolor="#b45309"];
   }`,
+
+  /* Java Module 4 structures */
+  'java-constructor-map': `digraph G {
+    rankdir=LR;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    empty [label="new String()\\nempty" shape=ellipse fillcolor="#3b2d6b" color="#a78bfa"];
+    chars [label="char[]\\nletters"];
+    slice [label="char[] + start\\n+ length"];
+    copy [label="String s1"];
+    bytes [label="byte[]\\nASCII values"];
+    result [label="String object\\njava.lang.String" fillcolor="#123b37" color="#5eead4"];
+    empty -> result;
+    chars -> result;
+    slice -> result;
+    copy -> result;
+    bytes -> result;
+  }`,
+  'java-string-class': `digraph G {
+    rankdir=TB;
+    node [shape=box style="rounded,filled" fillcolor="#172136" color="#3b4a68" fontcolor="#e8eefb" fontsize=11 fontname="Inter, sans-serif" margin="0.30,0.20"];
+    edge [color="#5eead4" fontcolor="#94a3bb" fontsize=10 fontname="Inter, sans-serif"];
+    lang [label="java.lang\\nloaded automatically" shape=ellipse fillcolor="#3b2d6b" color="#a78bfa"];
+    str [label="String\\nimmutable" fillcolor="#123b37" color="#5eead4"];
+    buffer [label="StringBuffer\\nmutable"];
+    builder [label="StringBuilder\\nmutable"];
+    lang -> str;
+    lang -> buffer;
+    lang -> builder;
+  }`,
 };
 
 /* DOT definitions are kept in the original dark palette; remap them for the light theme. */

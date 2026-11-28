@@ -38,6 +38,8 @@ nav a { color: var(--muted); }
 nav a .num { color: #55627a; }
 nav a:hover { color: var(--text); background: rgba(15, 23, 42, 0.045); }
 nav a.active { color: var(--accent); background: rgba(15, 118, 110, 0.09); border-color: rgba(15, 118, 110, 0.2); }
+.layout > aside nav a.side-nav-link:hover { color: var(--text); background: rgba(15, 23, 42, 0.045); }
+.layout > aside nav a.side-nav-link.active { color: var(--accent); background: rgba(15, 118, 110, 0.09); border-color: rgba(15, 118, 110, 0.2); }
 nav a.active .num { color: var(--accent); }
 
 main { color: var(--text); }

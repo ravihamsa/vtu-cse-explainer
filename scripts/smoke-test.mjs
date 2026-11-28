@@ -117,6 +117,42 @@ await sleep(1500);
 await check('dsa mind map', `!!document.querySelector('.native-diagram.d3-mindmap svg')`, true);
 await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
 await check('dsa mind map section link', `location.hash`, '#/s3/ds/m2/dsa-m2-overview');
+
+/* Landing pages: semester → subjects, subject → modules, module → topic pages. */
+await evaluate(`location.hash = '#/s3'`);
+await sleep(500);
+await check('semester landing', `document.querySelectorAll('.landing-card').length`, 3);
+await evaluate(`document.querySelector('.landing-card').click()`);
+await sleep(400);
+await check('semester card opens subject landing', `location.hash`, '#/s3/os');
+await check('subject landing', `document.querySelectorAll('.landing-card').length`, 1);
+await evaluate(`location.hash = '#/s3/ds/m3'`);
+await sleep(400);
+await check('module landing', `document.querySelectorAll('.landing-card').length`, 14);
+
+/* Java Module 4: one topic per page, mind map links remain inside Java. */
+await evaluate(`location.hash = '#/s3/java/m4/java-m4-mindmap'`);
+await sleep(1600);
+await check('java route', `document.querySelector('.breadcrumb').textContent`, (v) => v.includes('Java') && v.includes('String Handling'));
+await check('java topic page count', `document.querySelectorAll('section.java-lesson').length`, 1);
+await check('java mind map', `!!document.querySelector('.native-diagram.d3-mindmap svg')`, true);
+await check('java mind map icons', `document.querySelectorAll('.mm-icon').length`, 7);
+await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
+await check('java mind map section link', `location.hash`, '#/s3/java/m4/java-m4-overview');
+await evaluate(`location.hash = '#/s3/java/m4/java-m4-glossary'`);
+await sleep(500);
+await check('java glossary terms', `document.querySelectorAll('.glossary dt').length`, 23);
+await evaluate(`location.hash = '#/s3/java/m4/java-m4-questions'`);
+await sleep(500);
+await check('java conceptual questions', `document.querySelectorAll('.concept-questions li').length`, 12);
+await evaluate(`location.hash = '#/s3/java/m4/java-m4-quiz'`);
+await sleep(600);
+await check('java quiz options', `document.querySelectorAll('.dsa-q-option').length`, 4);
+await check('java quiz bank', `document.querySelector('.quiz-head span').textContent`, (v) => v.includes('14'));
+await evaluate(`document.querySelector('.dsa-q-option').click()`);
+await sleep(100);
+await check('java quiz feedback', `document.querySelector('.dsa-q-feedback')?.textContent.length`, (n) => n > 20);
+
 checks.push({ name: 'no runtime exceptions', ok: exceptions.length === 0, value: exceptions.length });
 
 socket.close();

@@ -429,7 +429,7 @@ export function D3MindMap({
         <div className="mindmap-tooltip" style={{ left: tooltip.x, top: tooltip.y }} role="status" aria-live="polite">
           <b>{tooltip.name}</b>
           <span>{tooltip.tip}</span>
-          {tooltip.concept && <span className="mm-tooltip-action">Click to jump to the detailed section →</span>}
+          {tooltip.concept && <span className="mm-tooltip-action">Click to open this topic →</span>}
         </div>
       )}
     </div>

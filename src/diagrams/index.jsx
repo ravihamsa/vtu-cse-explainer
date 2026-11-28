@@ -29,6 +29,9 @@ const mermaidStages = new Set([
   'dsa-postfix-flow',
   'dsa-traversal-flow',
   'dsa-bst-search',
+  'java-concat-flow',
+  'java-valueof-flow',
+  'java-extract-flow',
 ]);
 const graphvizStages = new Set([
   'ptab-hier',
@@ -47,6 +50,8 @@ const graphvizStages = new Set([
   'dsa-general-tree',
   'dsa-binary-tree',
   'dsa-threaded-tree',
+  'java-constructor-map',
+  'java-string-class',
 ]);
 
 export function Diagram({ name, ...props }) {

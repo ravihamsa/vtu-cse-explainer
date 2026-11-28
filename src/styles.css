@@ -358,6 +358,10 @@
 .breadcrumb b { color:var(--accent); font-weight:600; }
 .side-group { margin-bottom:14px; }
 .side-group-title { padding:4px 11px; font-size:10px; text-transform:uppercase; letter-spacing:1.4px; color:#63738e; }
+.side-nav-link { display:block; text-decoration:none; }
+.side-nav-link:hover { color:var(--text); background:rgba(255,255,255,.035); }
+.side-subject { color:#94a3bb; }
+.layout > aside nav a.side-nav-link.active { color:var(--accent); background:rgba(94,234,212,.08); border-color:rgba(94,234,212,.18); }
 .nav-sub { padding:1px 0 0 18px; }
 .side-foot { display:flex; flex-direction:column; gap:8px; }
 .side-foot button { width:100%; }

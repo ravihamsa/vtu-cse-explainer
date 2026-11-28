@@ -1,4 +1,5 @@
 import { dsaModuleIds, dsaModules } from './dsa.js';
+import { javaModuleIds, javaModules } from './java.js';
 
 /**
  * Content catalog. New semesters, subjects, modules and concepts are added here;
@@ -53,6 +54,19 @@ export const catalog = {
             })),
           })),
         },
+        {
+          id: 'java',
+          label: 'Java',
+          modules: javaModuleIds.map((id) => ({
+            id,
+            label: javaModules[id].label,
+            concepts: javaModules[id].concepts.map((concept) => ({
+              id: concept.id,
+              label: concept.label,
+              number: concept.number,
+            })),
+          })),
+        },
       ],
     },
   ],
@@ -60,16 +74,21 @@ export const catalog = {
 
 export const defaultRoute = { semester: 's3', subject: 'os', module: 'm4', concept: 'overview' };
 
+/** Routes may stop at any level to show a semester, subject or module landing page. */
 export function parseHash(hash) {
   const parts = hash.replace(/^#\/?/, '').split('/').filter(Boolean);
-  if (parts.length < 4) return defaultRoute;
+  if (!parts.length) return defaultRoute;
   const [semester, subject, module, concept] = parts;
   for (const s of catalog.semesters) {
     if (s.id !== semester) continue;
+    if (parts.length === 1) return { semester, subject: null, module: null, concept: null };
     for (const sub of s.subjects) {
       if (sub.id !== subject) continue;
+      if (parts.length === 2) return { semester, subject, module: null, concept: null };
       for (const mod of sub.modules) {
-        if (mod.id === module && mod.concepts.some((c) => c.id === concept)) {
+        if (mod.id !== module) continue;
+        if (parts.length === 3) return { semester, subject, module, concept: null };
+        if (mod.concepts.some((c) => c.id === concept)) {
           return { semester, subject, module, concept };
         }
       }
@@ -79,14 +98,18 @@ export function parseHash(hash) {
 }
 
 export function routeToHash(route) {
-  return `#/${route.semester}/${route.subject}/${route.module}/${route.concept}`;
+  let hash = `#/${route.semester}`;
+  if (route.subject) hash += `/${route.subject}`;
+  if (route.module) hash += `/${route.module}`;
+  if (route.concept) hash += `/${route.concept}`;
+  return hash;
 }
 
-/** Resolve a route to its semester, subject, module and concept objects. */
+/** Resolve whichever levels are present in the route; missing levels stay null. */
 export function describeRoute(route) {
   const semester = catalog.semesters.find((s) => s.id === route.semester) || catalog.semesters[0];
-  const subject = semester.subjects.find((s) => s.id === route.subject) || semester.subjects[0];
-  const module = subject.modules.find((m) => m.id === route.module) || subject.modules[0];
-  const concept = module.concepts.find((c) => c.id === route.concept) || module.concepts[0];
+  const subject = route.subject ? semester.subjects.find((s) => s.id === route.subject) : null;
+  const module = route.module && subject ? subject.modules.find((m) => m.id === route.module) : null;
+  const concept = route.concept && module ? module.concepts.find((c) => c.id === route.concept) : null;
   return { semester, subject, module, concept };
 }

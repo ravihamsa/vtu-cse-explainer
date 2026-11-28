@@ -9,6 +9,8 @@ import {
 import { sectionIds } from './content/sections.js';
 import { sectionComponents } from './sections/index.js';
 import DsaLesson from './components/DsaLesson.jsx';
+import JavaLesson from './components/JavaLesson.jsx';
+import LandingPage from './components/LandingPage.jsx';
 import { mountExplainer } from './legacy/explainer.js';
 
 function Sidebar({ activeRoute }) {
@@ -18,20 +20,35 @@ function Sidebar({ activeRoute }) {
         <div className="brand-mark">▦</div>
         <div>
           <h1>VTU Explainer</h1>
-          <small>Semester 3 · OS + DS</small>
+          <small>Semester 3 · OS + DS + Java</small>
         </div>
       </div>
       <div className="side-label">Browse by course structure</div>
       <nav id="nav">
         {catalog.semesters.map((semester) => (
           <div className="side-group" key={semester.id}>
-            <div className="side-group-title">{semester.label}</div>
+            <a
+              href={routeToHash({ semester: semester.id })}
+              className={`side-group-title side-nav-link ${!activeRoute.subject ? 'active' : ''}`}
+            >
+              {semester.label}
+            </a>
             {semester.subjects.map((subject) => (
               <div key={subject.id}>
-                <div className="side-group-title" style={{ color: '#94a3bb' }}>{subject.label}</div>
+                <a
+                  href={routeToHash({ semester: semester.id, subject: subject.id })}
+                  className={`side-group-title side-nav-link side-subject ${activeRoute.subject === subject.id && !activeRoute.module ? 'active' : ''}`}
+                >
+                  {subject.label}
+                </a>
                 {subject.modules.map((module) => (
                   <div className="nav-sub" key={module.id}>
-                    <div className="side-group-title">{module.label}</div>
+                    <a
+                      href={routeToHash({ semester: semester.id, subject: subject.id, module: module.id })}
+                      className={`side-group-title side-nav-link ${activeRoute.subject === subject.id && activeRoute.module === module.id && !activeRoute.concept ? 'active' : ''}`}
+                    >
+                      {module.label}
+                    </a>
                     <nav>
                       {module.concepts.map((concept) => {
                         const hash = routeToHash({
@@ -72,11 +89,15 @@ export default function App() {
   const [activeConcept, setActiveConcept] = useState(route.concept);
   const [progress, setProgress] = useState(0);
   const details = useMemo(() => describeRoute(route), [route]);
-  const isOs = route.subject === 'os';
-  const activeIds = useMemo(
-    () => (isOs ? sectionIds : details.module.concepts.map((concept) => concept.id)),
-    [isOs, details.module]
-  );
+  const hasConcept = Boolean(route.concept);
+  const isOs = hasConcept && route.subject === 'os';
+  const isJava = hasConcept && route.subject === 'java';
+  const activeIds = useMemo(() => {
+    if (!hasConcept) return [];
+    if (isOs) return sectionIds;
+    if (isJava) return [route.concept];
+    return details.module?.concepts.map((concept) => concept.id) || [];
+  }, [hasConcept, isOs, isJava, route.concept, details.module]);
 
   useEffect(() => {
     if (!window.location.hash) {
@@ -87,14 +108,18 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  // The legacy OS controller owns all OS demos; it must not touch DSA markup.
+  // The legacy OS controller owns all OS demos; it must not touch DSA or Java markup.
   useEffect(() => {
-    if (route.subject !== 'os') return undefined;
+    if (!isOs) return undefined;
     const dispose = mountExplainer();
     return dispose;
-  }, [route.subject]);
+  }, [isOs]);
 
   useEffect(() => {
+    if (!route.concept) {
+      setActiveConcept(null);
+      return;
+    }
     const target = document.getElementById(route.concept);
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setActiveConcept(route.concept);
@@ -105,6 +130,7 @@ export default function App() {
       const root = document.documentElement;
       const max = root.scrollHeight - root.clientHeight;
       setProgress(max > 0 ? (root.scrollTop / max) * 100 : 0);
+      if (!activeIds.length) return;
       let current = activeIds[0];
       for (const id of activeIds) {
         const el = document.getElementById(id);
@@ -117,7 +143,12 @@ export default function App() {
     return () => window.removeEventListener('scroll', update);
   }, [activeIds]);
 
-  const breadcrumb = `${details.semester.label} › ${details.subject.label} › ${details.module.label} › ${details.concept.label}`;
+  const breadcrumb = [
+    details.semester.label,
+    details.subject?.label,
+    details.module?.label,
+    details.concept?.label,
+  ].filter(Boolean).join(' › ');
 
   return (
     <>
@@ -126,8 +157,12 @@ export default function App() {
         <Sidebar activeRoute={route} />
         <main>
           <div className="breadcrumb"><b>Current concept</b> {breadcrumb}</div>
-          {isOs ? (
+          {!hasConcept ? (
+            <LandingPage route={route} />
+          ) : isOs ? (
             sectionComponents.map(({ id, Component }) => <Component key={id} />)
+          ) : isJava ? (
+            <JavaLesson route={route} />
           ) : (
             details.module.concepts.map((concept) => (
               <DsaLesson
@@ -137,7 +172,7 @@ export default function App() {
             ))
           )}
           <footer>
-            Built for VTU CSE semester 3 · {details.subject.label} · {details.module.label}. Extend from <code>src/content/catalog.js</code>.
+            Built for VTU CSE semester 3 · {details.subject?.label || 'choose a subject'} · {details.module?.label || 'choose a module'}. Extend from <code>src/content/catalog.js</code>.
           </footer>
         </main>
       </div>

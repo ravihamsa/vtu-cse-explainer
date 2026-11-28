@@ -3,8 +3,10 @@
  * text that escapes its container or visibly overlaps another text node.
  *
  * Run while `npm run preview` is serving the app:
- *   node scripts/check-layout.mjs
+ *   node scripts/check-layout.mjs                       # current page
+ *   node scripts/check-layout.mjs '#/s3/java/m4/java-m4-mindmap'
  */
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const targets = await (await fetch('http://127.0.0.1:9222/json')).json();
 const page = targets.find((t) => t.type === 'page' && t.url.includes('127.0.0.1:4173'));
 if (!page) throw new Error('No preview page target found on Chrome port 9222');
@@ -14,6 +16,22 @@ await new Promise((resolve, reject) => {
   socket.addEventListener('open', resolve, { once: true });
   socket.addEventListener('error', reject, { once: true });
 });
+
+let id = 0;
+const pending = new Map();
+socket.addEventListener('message', (event) => {
+  const msg = JSON.parse(event.data);
+  if (msg.id && pending.has(msg.id)) {
+    pending.get(msg.id)(msg);
+    pending.delete(msg.id);
+  }
+});
+const send = (method, params = {}) =>
+  new Promise((resolve) => {
+    const commandId = ++id;
+    pending.set(commandId, resolve);
+    socket.send(JSON.stringify({ id: commandId, method, params }));
+  });
 
 const expression = `(() => {
   const roots = [...document.querySelectorAll('.native-diagram, .react-stage')];
@@ -43,12 +61,12 @@ const expression = `(() => {
   return { diagrams: roots.length, total: issues.length, issues: issues.slice(0, 30) };
 })()`;
 
-socket.send(JSON.stringify({ id: 1, method: 'Runtime.evaluate', params: { expression, returnByValue: true } }));
-const result = await new Promise((resolve) => {
-  socket.addEventListener('message', (event) => {
-    const msg = JSON.parse(event.data);
-    if (msg.id === 1) resolve(msg.result?.result?.value);
-  });
-});
+await send('Page.enable');
+const route = process.argv[2];
+if (route) {
+  await send('Page.navigate', { url: `http://127.0.0.1:4173/${route}` });
+  await sleep(2500);
+}
+const response = await send('Runtime.evaluate', { expression, returnByValue: true });
 socket.close();
-console.log(JSON.stringify(result, null, 2));
+console.log(JSON.stringify(response.result?.result?.value, null, 2));

@@ -130,6 +130,27 @@ const DEFINITIONS = {
     F --> G
     G -- Yes --> H["Not found / insert here"]
     G -- No --> A`,
+
+  /* Java Module 4 flows */
+  'java-concat-flow': `flowchart LR
+    A["Hello"] --> B["+ operator"]
+    B --> C["New String<br/>Hello World"]
+    A --> D["concat()"]
+    D --> E["New String<br/>HelloWorld"]`,
+
+  'java-valueof-flow': `flowchart LR
+    A["int 100"] --> V["String.valueOf()"]
+    B["double 12.5"] --> V
+    C["boolean true"] --> V
+    D["char A"] --> V
+    V --> S["String object"]`,
+
+  'java-extract-flow': `flowchart TB
+    A["String"] --> B{"What do you need?"}
+    B -- "One character" --> C["charAt(index) → char"]
+    B -- "A range" --> D["getChars(...) → char[]"]
+    B -- "Every byte" --> E["getBytes() → byte[]"]
+    B -- "Every char" --> F["toCharArray() → char[]"]`,
 };
 
 let mermaidPromise;

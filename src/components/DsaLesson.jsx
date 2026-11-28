@@ -245,13 +245,13 @@ function Block({ block, moduleData, route }) {
   }
 }
 
-export default function DsaLesson({ route }) {
-  const moduleData = dsaModules[route.module];
+export default function DsaLesson({ route, modules = dsaModules, extraClass = '' }) {
+  const moduleData = modules[route.module];
   const concept = moduleData?.concepts.find((item) => item.id === route.concept) || moduleData?.concepts[0];
   if (!moduleData || !concept) return null;
 
   return (
-    <section id={concept.id} className="lesson-section dsa-lesson">
+    <section id={concept.id} className={`lesson-section dsa-lesson ${extraClass}`.trim()}>
       <div className="eyebrow">{concept.number} · {concept.kicker}</div>
       <h2>{concept.title}</h2>
       {concept.blocks.map((block, i) => (
