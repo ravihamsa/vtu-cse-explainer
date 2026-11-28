@@ -1,6 +1,6 @@
 /**
  * Java explainer content derived only from Java module4.pdf (Module 4 · String Handling).
- * Each concept is its own hash page, so the topic pages stay short and focused.
+ * All concepts render inline on the module page; concept hashes deep-link to a section.
  */
 
 const P = (text) => ({ t: 'p', text });

@@ -38,8 +38,8 @@ const evaluate = async (expression) => {
 
 await send('Runtime.enable');
 await send('Page.enable');
-await send('Page.navigate', { url: 'http://127.0.0.1:4173/#/s3/os/m4/overview' });
-await send('Page.reload', { ignoreCache: true });
+// A changing query forces a full document load even when the tab was already on this hash.
+await send('Page.navigate', { url: `http://127.0.0.1:4173/?smoke=${Date.now()}#/s3/os/m4/overview` });
 await sleep(3500);
 
 const checks = [];
@@ -118,7 +118,7 @@ await check('dsa mind map', `!!document.querySelector('.native-diagram.d3-mindma
 await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
 await check('dsa mind map section link', `location.hash`, '#/s3/ds/m2/dsa-m2-overview');
 
-/* Landing pages: semester → subjects, subject → modules, module → topic pages. */
+/* Landing pages: semester → subjects, subject → modules; module routes render inline sections. */
 await evaluate(`location.hash = '#/s3'`);
 await sleep(500);
 await check('semester landing', `document.querySelectorAll('.landing-card').length`, 3);
@@ -128,14 +128,18 @@ await check('semester card opens subject landing', `location.hash`, '#/s3/os');
 await check('subject landing', `document.querySelectorAll('.landing-card').length`, 1);
 await evaluate(`location.hash = '#/s3/ds/m3'`);
 await sleep(400);
-await check('module landing', `document.querySelectorAll('.landing-card').length`, 14);
+await check('module content inline', `document.querySelectorAll('section.dsa-lesson').length`, 14);
 
-/* Java Module 4: one topic per page, mind map links remain inside Java. */
+/* Java Module 4: all topics inline on the module page, concept hashes scroll to a section. */
+await evaluate(`location.hash = '#/s3/java/m4'`);
+await sleep(800);
+await check('java module inline sections', `document.querySelectorAll('section.java-lesson').length`, 16);
 await evaluate(`location.hash = '#/s3/java/m4/java-m4-mindmap'`);
 await sleep(1600);
 await check('java route', `document.querySelector('.breadcrumb').textContent`, (v) => v.includes('Java') && v.includes('String Handling'));
-await check('java topic page count', `document.querySelectorAll('section.java-lesson').length`, 1);
+await check('java inline sections on concept hash', `document.querySelectorAll('section.java-lesson').length`, 16);
 await check('java mind map', `!!document.querySelector('.native-diagram.d3-mindmap svg')`, true);
+await check('java concept deep link scroll', `Math.abs(document.getElementById('java-m4-mindmap').getBoundingClientRect().top)`, (v) => v < 140);
 await check('java mind map icons', `document.querySelectorAll('.mm-icon').length`, 7);
 await evaluate(`document.querySelector('.mm-node').dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
 await check('java mind map section link', `location.hash`, '#/s3/java/m4/java-m4-overview');

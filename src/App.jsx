@@ -89,15 +89,14 @@ export default function App() {
   const [activeConcept, setActiveConcept] = useState(route.concept);
   const [progress, setProgress] = useState(0);
   const details = useMemo(() => describeRoute(route), [route]);
-  const hasConcept = Boolean(route.concept);
-  const isOs = hasConcept && route.subject === 'os';
-  const isJava = hasConcept && route.subject === 'java';
+  const hasModule = Boolean(route.module);
+  const isOs = hasModule && route.subject === 'os';
+  const isJava = hasModule && route.subject === 'java';
   const activeIds = useMemo(() => {
-    if (!hasConcept) return [];
+    if (!hasModule) return [];
     if (isOs) return sectionIds;
-    if (isJava) return [route.concept];
     return details.module?.concepts.map((concept) => concept.id) || [];
-  }, [hasConcept, isOs, isJava, route.concept, details.module]);
+  }, [hasModule, isOs, details.module]);
 
   useEffect(() => {
     if (!window.location.hash) {
@@ -157,12 +156,14 @@ export default function App() {
         <Sidebar activeRoute={route} />
         <main>
           <div className="breadcrumb"><b>Current concept</b> {breadcrumb}</div>
-          {!hasConcept ? (
+          {!hasModule ? (
             <LandingPage route={route} />
           ) : isOs ? (
             sectionComponents.map(({ id, Component }) => <Component key={id} />)
           ) : isJava ? (
-            <JavaLesson route={route} />
+            details.module.concepts.map((concept) => (
+              <JavaLesson key={concept.id} route={{ ...route, concept: concept.id }} />
+            ))
           ) : (
             details.module.concepts.map((concept) => (
               <DsaLesson

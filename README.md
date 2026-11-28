@@ -1,6 +1,6 @@
 # VTU Explainer — Semester 3
 
-A static React app that turns the original single-file memory-management explainer into an extensible course site. It covers **Operating Systems · Module 4**, all four modules of **Data Structures** from `DSA_NOTES.pdf`, and **Java · Module 4 (String Handling)** from the supplied Java notes, with easy South Indian examples throughout. Navigation is organised as **Semester → Subject → Module → Concept**, with landing pages at each level, so more VTU subjects and concepts can be added without rewriting the shell.
+A static React app that turns the original single-file memory-management explainer into an extensible course site. It covers **Operating Systems · Module 4**, all four modules of **Data Structures** from `DSA_NOTES.pdf`, and **Java · Module 4 (String Handling)** from the supplied Java notes, with easy South Indian examples throughout. Navigation is organised as **Semester → Subject → Module → Concept**: semester and subject pages are landing pages, while every module page renders its whole lesson inline. Concept hashes deep-link and scroll to a section instead of opening separate pages.
 
 ## Diagram stack
 
@@ -11,7 +11,7 @@ All four tools are used, each for what it does best:
 | React + CSS | Animated OS stages plus data-driven DSA and Java stages (classification, array cells, stacks, queues, immutable-string flow, `getChars()` range) | `src/diagrams/ReactStages.jsx`, `src/components/DsaLesson.jsx` |
 | Mermaid | OS, DSA and Java flows (DMA, insertion/radix sort, infix→postfix, traversal, BST search, concatenation, `String.valueOf()`, extraction choices) | `src/diagrams/MermaidDiagram.jsx` |
 | Graphviz (`@viz-js/viz` WASM) | Structured OS, DSA and Java diagrams (page tables, pointer chains, trees, constructor inputs and `java.lang` class family) | `src/diagrams/GraphvizDiagram.jsx` |
-| D3 | Per-subject zoom/pan mind maps with branch icons, colours, hover tooltips and click-through page links, plus OS data charts | `src/diagrams/D3Charts.jsx` |
+| D3 | Per-subject zoom/pan mind maps with branch icons, colours, hover tooltips and click-through section links, plus OS data charts | `src/diagrams/D3Charts.jsx` |
 
 No PNGs are shipped. Mermaid and Graphviz compute label-aware layouts, so text no longer overlaps the way it did in the screenshot-based diagrams. Graphviz SVGs render at their natural size (instead of being stretched to the column width) with extra node margin, so labels stay at a readable 11px with padding inside each shape. Mermaid flowcharts also keep their natural size; wide horizontal flows scroll inside their card instead of shrinking labels to unreadable sizes. Narrow screens collapse fixed-width grids and stage layouts so sections no longer spill out. The old PNG generator is kept at `scripts/generate-diagrams.js` as a reference/fallback (`npm run diagrams` writes to `reference-diagrams/`, ignored by git).
 
@@ -52,14 +52,13 @@ Each module has a 20-term glossary, 10 conceptual questions and a 10-question ra
 
 ## Java Module 4 coverage
 
-Only the supplied **Module 4 · String Handling** notes are used. Each topic is its own hash page, so a lesson stays focused instead of becoming one very long page.
+Only the supplied **Module 4 · String Handling** notes are used. All 16 sections render inline on one module page; concept hashes simply scroll to the matching section.
 
-| Level | Pages | What is covered |
+| Level | Sections | What is covered |
 |---|---:|---|
-| Landing | `#/s3`, `#/s3/java`, `#/s3/java/m4` | Subjects, modules and the 16 topic-page links |
 | Learning spine | 4 | Big picture, D3 mind map, 23-term glossary and 12 conceptual questions |
 | Core topics | 9 | Immutability and the String class, constructors, `length()`, literals and concatenation, `String.valueOf()`, `charAt()`, `getChars()`, `getBytes()` and `toCharArray()` |
-| Wrap-up | 2 | Mutable-class introduction and a canteen scenario lab, then a 14-question randomised quiz |
+| Wrap-up | 3 | Mutable-class introduction, a canteen scenario lab and a 14-question randomised quiz |
 
 `StringBuffer` and `StringBuilder` are included only as the introduction in the notes describes them: mutable classes in `java.lang` for frequent modification. Their methods are not invented because the supplied PDF gives no method coverage. Examples stay close to the notes and use idli tokens, dosa order slips and filter-coffee labels.
 
@@ -67,10 +66,10 @@ Only the supplied **Module 4 · String Handling** notes are used. Each topic is 
 
 - `#/s3` lists all Semester 3 subjects.
 - `#/s3/os` (or `#/s3/ds`, `#/s3/java`) lists all modules in that subject.
-- `#/s3/java/m4` lists every topic page in the module.
-- `#/s3/java/m4/java-m4-getchars` opens one focused concept page.
+- `#/s3/java/m4` renders all 16 Java sections inline on one page (the same is true for OS and every DSA module).
+- `#/s3/java/m4/java-m4-getchars` deep-links to that section and scrolls it into view; it is not a separate page.
 
-The sidebar semester, subject and module titles link to those landing pages; concept links still open the detailed page directly.
+The sidebar semester and subject titles link to the landing pages, module titles open the inline lesson, and concept links scroll to a section inside it.
 
 ## Run locally
 
@@ -96,7 +95,7 @@ npm run preview
 - `src/sections/` — one React component per OS concept, rendered by `RenderSection.jsx`.
 - `src/components/DsaLesson.jsx` — generic data-driven renderer for DSA and Java concepts, steppers and quizzes.
 - `src/components/JavaLesson.jsx` — Java wrapper that selects the Java module data.
-- `src/components/LandingPage.jsx` and `src/landing.css` — semester, subject and module landing pages.
+- `src/components/LandingPage.jsx` and `src/landing.css` — semester and subject landing pages.
 - `src/legacy/explainer.js` — the original OS simulations and animations, mounted only on OS routes with listener/timer cleanup.
 - `src/diagrams/` — all diagram components and their styles.
 - `src/App.jsx` — sidebar, breadcrumb, progress bar, subject-aware routing, and controller lifecycle.
@@ -114,9 +113,9 @@ For OS:
 4. If the concept needs simulation logic, add it to `src/legacy/explainer.js` and return a cleanup for any listeners/timers.
 5. If it needs a figure, add it to `src/diagrams/index.jsx` and implement it in the relevant diagram component.
 
-For Data Structures or Java, add the concept and its blocks to the relevant module in `src/content/dsa.js` or `src/content/java.js`; the catalog, sidebar, landing cards, renderer and mind map links are generated automatically. Available block types are `p`, `list`, `cards`, `table`, `diagram`, `steps`, `code`, `callout`, `example`, `formula`, `mindmap`, `glossary`, `questions` and `quiz`.
+For Data Structures or Java, add the concept and its blocks to the relevant module in `src/content/dsa.js` or `src/content/java.js`; the catalog, sidebar, inline sections and mind map links are generated automatically. Available block types are `p`, `list`, `cards`, `table`, `diagram`, `steps`, `code`, `callout`, `example`, `formula`, `mindmap`, `glossary`, `questions` and `quiz`.
 
-Routing is hash-based (`#/s3/os/m4/<concept>`, `#/s3/ds/m2/dsa-m2-stacks` or `#/s3/java/m4/java-m4-charat`), so GitHub Pages needs no server rewrites. Landing routes stop early: `#/s3`, `#/s3/java` and `#/s3/java/m4`.
+Routing is hash-based (`#/s3/os/m4/<concept>`, `#/s3/ds/m2/dsa-m2-stacks` or `#/s3/java/m4/java-m4-getchars`), so GitHub Pages needs no server rewrites. The module route renders everything inline; concept hashes scroll to a section. Only `#/s3`, `#/s3/java` and similar subject routes are landing pages.
 
 ## Verification
 
@@ -126,12 +125,12 @@ The repo includes two Chrome DevTools Protocol helpers:
 npm run build
 npm run preview
 # in another terminal, with Chrome running on --remote-debugging-port=9222:
-node scripts/check-layout.mjs                                # current page
-node scripts/check-layout.mjs '#/s3/java/m4/java-m4-mindmap'  # or any route
-node scripts/smoke-test.mjs                                   # clicks through key pages
+node scripts/check-layout.mjs                        # current page
+node scripts/check-layout.mjs '#/s3/java/m4'          # or any route
+node scripts/smoke-test.mjs                           # clicks through key pages
 ```
 
-Current results: **19 OS diagrams + 7–9 DSA diagrams per module + 1 Java diagram per topic page, 0 layout issues from 320px to 1440px, 40/40 interaction checks, 0 runtime exceptions**. Verified values include all three D3 mind maps (zoom, tooltips and section links), glossary and conceptual-prompt counts, FIFO/LRU/OPT behaviour, TLB EAT `140.0 ns`, fragmentation allocation, base/limit and segment traps, copy-on-write state switching, replacement stepping, OS/DSA/Java quiz feedback, landing-page navigation and subject/module routing. The OS knowledge check serves **107 questions**; every DSA module has its own 10-question randomised check, and Java Module 4 has a 14-question randomised check.
+Current results: **19 OS diagrams + 7–9 DSA diagrams per module + 1 Java diagram per section, 0 layout issues from 320px to 1440px, 42/42 interaction checks, 0 runtime exceptions**. Verified values include all three D3 mind maps (zoom, tooltips and section links), glossary and conceptual-prompt counts, FIFO/LRU/OPT behaviour, TLB EAT `140.0 ns`, fragmentation allocation, base/limit and segment traps, copy-on-write state switching, replacement stepping, OS/DSA/Java quiz feedback, inline module sections, landing-page navigation and concept deep links. The OS knowledge check serves **107 questions**; every DSA module has its own 10-question randomised check, and Java Module 4 has a 14-question randomised check.
 
 ## Deploying to GitHub Pages
 

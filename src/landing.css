@@ -10,8 +10,6 @@
   margin-top: 24px;
 }
 
-.landing-grid-topics { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
-
 .landing-card {
   display: flex;
   flex-direction: column;
@@ -49,5 +47,5 @@
 
 @media (max-width: 720px) {
   .landing-page { padding-top: 34px; }
-  .landing-grid, .landing-grid-topics { grid-template-columns: 1fr; }
+  .landing-grid { grid-template-columns: 1fr; }
 }
