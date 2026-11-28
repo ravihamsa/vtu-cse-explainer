@@ -43,9 +43,9 @@ The module now opens with an **illustrated D3 mind map** (§01) that uses custom
 
 | Module | Concepts | What is covered |
 |---|---:|---|
-| M1 · Arrays, Pointers & Sorting | 16 | Definitions and operations, pointers and pointer-to-pointer, DMA (`malloc`/`calloc`/`realloc`/`free`), static/dynamic arrays, row- and column-major matrices, structures/unions, polynomials, sparse triplets, strings, insertion sort, radix sort and nine scenario problems |
-| M2 · Stacks, Queues & Expressions | 14 | LIFO stacks, overflow/underflow, ISP/ICP infix→postfix conversion, postfix evaluation, FIFO queues, circular queues, priority queues, deques, two stacks/two queues in one array and five scenarios |
-| M3 · Linked Lists | 14 | SLL operations, header nodes, ordered lists, circular lists with `last`, polynomial addition, DLLs, sparse-matrix row chains and ten placement-style scenarios |
+| M1 · Arrays, Pointers & Sorting | 16 | Definitions and operations, pointers and pointer-to-pointer, DMA (`malloc`/`calloc`/`realloc`/`free`), static/dynamic arrays, row- and column-major matrices, structures/unions, polynomials, sparse triplets, strings, insertion sort, radix sort and a scenario lab |
+| M2 · Stacks, Queues & Expressions | 14 | LIFO stacks, overflow/underflow, ISP/ICP infix→postfix conversion, postfix evaluation, FIFO queues, circular queues, priority queues, deques, two stacks/two queues in one array and a scenario lab |
+| M3 · Linked Lists | 14 | SLL operations, header nodes, ordered lists, circular lists with `last`, polynomial addition, DLLs, sparse-matrix row chains and classic placement-style scenario prompts |
 | M4 · Trees | 12 | Tree terminology and LCRS, full/complete/perfect/skewed binary trees, array and linked representations, four traversals, threaded trees, BST search/insert/delete, selection trees, forests and worked reconstruction hints |
 
 Each module has a 20-term glossary, 10 conceptual questions and a 10-question randomised quiz with explanations. Examples use familiar settings such as idli plates, filter-coffee strings, railway ticket queues, monsoon sensor grids and bus-stand rings so the structure is understood before the C syntax.
@@ -109,9 +109,8 @@ Current results: **19 OS diagrams + 7–9 DSA diagrams per module, 0 layout issu
 
 ## Deploying to GitHub Pages
 
-1. Create a GitHub repository (for example `vtu-explainer`) and push this folder to its `main` branch.
-2. In the repo, go to **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**.
-3. The workflow builds with `VITE_BASE_PATH=/<repo-name>/`, so assets work under the Pages sub-path.
-4. Every push to `main` deploys automatically. For a custom domain, set `VITE_BASE_PATH=/` in the workflow and add your `CNAME` record.
+The app is published at **https://ravihamsa.github.io/vtu-cse-explainer/** from `https://github.com/ravihamsa/vtu-cse-explainer`.
 
-Publishing needs your GitHub account; there is no authenticated GitHub CLI in this environment, so the remote steps must be run from your machine.
+1. The repo is connected to `main`; every push deploys automatically.
+2. Pages uses **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+3. The workflow builds with `VITE_BASE_PATH=/<repo-name>/`, so assets work under the Pages sub-path. For a custom domain, set `VITE_BASE_PATH=/` in the workflow and add your `CNAME` record.

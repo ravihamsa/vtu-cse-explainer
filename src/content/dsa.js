@@ -19,6 +19,7 @@ const concept = (id, label, number, kicker, title, blocks) => ({
 });
 
 const stem = (moduleId, id) => `dsa-${moduleId}-${id}`;
+const ROOT_ICON = 'M-4,-4 h8 v8 h-8 Z M-6,-2 h2 M-6,0 h2 M-6,2 h2 M4,-2 h2 M4,0 h2 M4,2 h2 M-2,-6 v2 M0,-6 v2 M2,-6 v2 M-2,4 v2 M0,4 v2 M2,4 v2';
 
 /* ------------------------------------------------------------------ */
 /* Module 1 — arrays, pointers, DMA, strings and sorting                */
@@ -96,6 +97,7 @@ const m1 = {
     Records: '#b45309', 'Compact data': '#be123c', Sorting: '#15803d',
   },
   icons: {
+    root: ROOT_ICON,
     Foundations: 'M-5,-4 h10 v8 h-10 Z M-5,0 h10 M0,-4 v8',
     Memory: 'M-4,-3 h8 v6 h-8 Z M-4,-1 h8 M-1,-3 v6 M1,0 l3,0 M3,-2 l1,2 l-1,2',
     Arrays: 'M-5,-3 h3 v6 h-3 Z M-1,-3 h3 v6 h-3 Z M3,-3 h3 v6 h-3 Z',
@@ -460,6 +462,7 @@ const m2 = {
     Variations: '#b45309', Scenarios: '#15803d',
   },
   icons: {
+    root: ROOT_ICON,
     Stack: 'M-4,3 h8 v2 h-8 Z M-4,0 h8 v2 h-8 Z M-4,-3 h8 v2 h-8 Z',
     Expressions: 'M-5,-2 h4 v4 h-4 Z M1,-2 h4 v4 h-4 Z M-1,0 h2 M-3,-4 v2 M3,-4 v2',
     Queue: 'M-5,-3 h3 v6 h-3 Z M-1,-3 h3 v6 h-3 Z M3,-3 h3 v6 h-3 Z M-5,4 h10',
@@ -760,6 +763,7 @@ const m3 = {
     Basics: '#0f766e', Variants: '#7c3aed', Applications: '#b45309', Techniques: '#15803d',
   },
   icons: {
+    root: ROOT_ICON,
     Basics: 'M-5,-3 h3 v6 h-3 Z M1,-3 h3 v6 h-3 Z M-2,0 h3 M-5,4 h10',
     Variants: 'M-4,-3 a4,3 0 1 1 0.1,0 M-4,-3 v6 M4,-3 v6 M0,1 v3',
     Applications: 'M-5,-4 h10 v8 h-10 Z M-5,-1 h10 M-2,-4 v3 M2,-1 v3',
@@ -1047,6 +1051,7 @@ const m4 = {
     Traversal: '#b45309', 'Search trees': '#15803d',
   },
   icons: {
+    root: ROOT_ICON,
     'Tree basics': 'M0,-5 v3 M0,-2 h-5 v3 M0,-2 h5 v3 M-5,1 v3 M5,1 v3',
     'Binary trees': 'M0,-4 v3 M0,-1 h-5 v3 M0,-1 h5 v3 M-5,2 v2 M5,2 v2',
     Storage: 'M-5,-3 h10 v6 h-10 Z M-5,0 h10 M0,-3 v6',
